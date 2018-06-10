@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/threadManager.js",
   "scripts": {
-    "build": "webpack --config config/webpack.config.js",
-    "release": "webpack --config config/webpack.config.js -p",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --config config/webpack.config.js --env.mode=development",
+    "release": "webpack --config config/webpack.config.js -p --env.mode=production",
+    "test": "npm run build && node tests/e2e/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.0.0-beta.38",
     "babel": "^6.23.0",
     "babel-loader": "^8.0.0-beta.0",
+    "express": "^4.16.3",
     "webpack": "^3.10.0"
   }
 }

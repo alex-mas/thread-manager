@@ -1,0 +1,6 @@
+- Create a wrapper for MessageEvent so that we can allow mutations on top of it if the user needs them.
+- Setup jsdoc comments in the code and generate the docs with it
+- Benchmark the overhead provided by this library
+- New distribution methods
+- Generate informative error handling only on development version
+- Find a suitable framework to unit test the library.

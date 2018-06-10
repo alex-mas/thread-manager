@@ -1,5 +1,10 @@
 
 
+const DEV_CALL = (fnc) => {
+    if (THREADMANAGER__ENV === 'development') { fnc(); }
+    else { return; }
+}
+
 const WorkerStatus = {
     IDLE: Symbol(1),
     BUSY: Symbol(2)
@@ -27,16 +32,16 @@ const ThreadManager = function (filePath, config, eHandler) {
             'File path must be provided in order for the thread manager to work, expected a string but got a ' + filePath
         );
     }
-    //configuration initialization
 
     this.config = config || {};
 
     if (typeof this.config !== 'object' || Array.isArray(this.config)) {
         throw new Error('Invalid configuration provided for the thread manager');
     }
+
     if (!this.config.distributionMethod) { this.config.distributionMethod = "round robin"; }
-    if (!this.config.initialization) { this.config.initialization = "at_start"; }
-    if (!this.config.sendingMethod) { this.config.sendingMethod = "default"; }
+    if (!this.config.initialization) { this.config.initialization = "at start"; }
+    if (!this.config.distributionMethod) { this.config.distributionMethod = "default"; }
 
     this.filePath = filePath;
 
@@ -53,9 +58,10 @@ const ThreadManager = function (filePath, config, eHandler) {
         this.isCallbackDefined = true;
     }
 
-    if (this.config.initialization === "at_start") {
+    if (this.config.initialization === "at start") {
         this.initializeWorkers();
     }
+    this.middleware = [];
 
 };
 
@@ -92,12 +98,15 @@ ThreadManager.prototype.initializeWorker = function (handler) {
     }
 }
 
-ThreadManager.prototype._eventHandler = (callback, workerid) => {
+ThreadManager.prototype._eventHandler = function(callback, workerid){
     if (callback) {
-        return (event) => {
-            this.workerStatus[workerid] = 'idle';
-            callback(event);
-        }
+        return (message)=>{
+            this.workers[workerid].status = WorkerStatus.IDLE
+            for (let i = 0; i < this.middleware.length; i++) {
+                this.middleware[i](message);
+            }
+            callback(message);
+        };
     }
 }
 
@@ -115,7 +124,15 @@ ThreadManager.prototype.setEventHandler = function (worker, handler) {
     worker.onmessage = this._eventHandler(handler, worker.id);
 }
 
-ThreadManager.prototype.distributeWork = function (event, context, callback) {
+ThreadManager.prototype.use = function (middleware) {
+    if (typeof middleware !== 'function') {
+        throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof handler);
+    }
+    this.middleware.push(middleware);
+}
+
+
+ThreadManager.prototype.distribute = function (event, context, callback) {
     let workHandler = callback || this.onMessage;
     if (workHandler === undefined || typeof workHandler !== "function") {
         throw new Error('Cant distribute work without a function to handle its return value');
@@ -154,9 +171,9 @@ ThreadManager.prototype.broadcast = function (event, context, callback) {
 
 ThreadManager.prototype.giveWork = function (worker, event, context) {
     worker.status = WorkerStatus.BUSY;
-    if (this.config.sendingMethod === "transferList") {
+    if (this.config.distributionMethod === "transferList") {
         worker.postMessage(context, [context]);
-    } else if (this.config.sendingMethod === 'json') {
+    } else if (this.config.distributionMethod === 'json') {
         let data = { event, context };
         worker.postMessage(JSON.stringify(data));
     } else {

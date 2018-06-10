@@ -6,7 +6,7 @@ var outputFile = libraryName + '.js';
 
 const rootPath = path.join(__dirname, '../');
 
-var config = {
+var config =  env => ({
     entry: rootPath + 'src/threadManager.js',
     devtool: 'source-map',
     output: {
@@ -24,7 +24,12 @@ var config = {
                 exclude: /(node_modules|bower_components)/
             }
         ]
-    }
-};
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'THREADMANAGER_ENV': env.mode
+        })
+    ]
+});
 
 module.exports = config;

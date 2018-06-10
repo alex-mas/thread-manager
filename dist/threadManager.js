@@ -77,6 +77,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports) {
 
+const DEV_CALL = fnc => {
+  if (THREADMANAGER__ENV === 'development') {
+    fnc();
+  } else {
+    return;
+  }
+};
+
 const WorkerStatus = {
   IDLE: Symbol(1),
   BUSY: Symbol(2)
@@ -101,8 +109,7 @@ const WorkerStatus = {
 const ThreadManager = function (filePath, config, eHandler) {
   if (!filePath) {
     throw new Error('File path must be provided in order for the thread manager to work, expected a string but got a ' + filePath);
-  } //configuration initialization
-
+  }
 
   this.config = config || {};
 
@@ -115,7 +122,7 @@ const ThreadManager = function (filePath, config, eHandler) {
   }
 
   if (!this.config.initialization) {
-    this.config.initialization = "at_start";
+    this.config.initialization = "at start";
   }
 
   if (!this.config.sendingMethod) {
@@ -135,9 +142,11 @@ const ThreadManager = function (filePath, config, eHandler) {
     this.isCallbackDefined = true;
   }
 
-  if (this.config.initialization === "at_start") {
+  if (this.config.initialization === "at start") {
     this.initializeWorkers();
   }
+
+  this.middleware = [];
 };
 /**
  * 
@@ -176,11 +185,16 @@ ThreadManager.prototype.initializeWorker = function (handler) {
   }
 };
 
-ThreadManager.prototype._eventHandler = (callback, workerid) => {
+ThreadManager.prototype._eventHandler = function (callback, workerid) {
   if (callback) {
-    return event => {
-      this.workerStatus[workerid] = 'idle';
-      callback(event);
+    return message => {
+      this.workers[workerid].status = WorkerStatus.IDLE;
+
+      for (let i = 0; i < this.middleware.length; i++) {
+        this.middleware[i](message);
+      }
+
+      callback(message);
     };
   }
 };
@@ -196,6 +210,14 @@ ThreadManager.prototype.setDefaultEventHandler = function (handler) {
 
 ThreadManager.prototype.setEventHandler = function (worker, handler) {
   worker.onmessage = this._eventHandler(handler, worker.id);
+};
+
+ThreadManager.prototype.use = function (middleware) {
+  if (typeof middleware !== 'function') {
+    throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof handler);
+  }
+
+  this.middleware.push(middleware);
 };
 
 ThreadManager.prototype.distributeWork = function (event, context, callback) {

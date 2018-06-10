@@ -1,1 +1,3 @@
 /node_modules
+/dist
+/tests/e2e/public/lib/threadManager.js
