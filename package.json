@@ -1,12 +1,17 @@
 {
   "name": "@axc/thread-manager",
   "version": "0.1.0",
+  "keywords": ["web workers"],
   "description": "utility class to help managing web workers",
   "main": "dist/threadManager.js",
   "scripts": {
     "build": "webpack --config config/webpack.config.js --env.mode=development",
     "release": "webpack --config config/webpack.config.js -p --env.mode=production",
     "test": "npm run build && node tests/e2e/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alex-mas/thread-manager.git"
   },
   "author": "Àlex Mas",
   "license": "MIT",
