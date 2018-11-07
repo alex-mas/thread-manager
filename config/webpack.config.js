@@ -1,7 +1,7 @@
 
 var webpack = require('webpack');
 var path = require('path');
-var libraryName = 'threadManager';
+var libraryName = 'ThreadManager';
 var outputFile = libraryName + '.js';
 
 const rootPath = path.join(__dirname, '../');

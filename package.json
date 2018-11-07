@@ -1,7 +1,7 @@
 {
-  "name": "threadmanager",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@axc/thread-manager",
+  "version": "0.1.0",
+  "description": "utility class to help managing web workers",
   "main": "dist/threadManager.js",
   "scripts": {
     "build": "webpack --config config/webpack.config.js --env.mode=development",

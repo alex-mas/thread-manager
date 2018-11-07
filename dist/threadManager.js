@@ -2,11 +2,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("threadManager", [], factory);
+		define("ThreadManager", [], factory);
 	else if(typeof exports === 'object')
-		exports["threadManager"] = factory();
+		exports["ThreadManager"] = factory();
 	else
-		root["threadManager"] = factory();
+		root["ThreadManager"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -125,8 +125,8 @@ const ThreadManager = function (filePath, config, eHandler) {
     this.config.initialization = "at start";
   }
 
-  if (!this.config.sendingMethod) {
-    this.config.sendingMethod = "default";
+  if (!this.config.distributionMethod) {
+    this.config.distributionMethod = "default";
   }
 
   this.filePath = filePath; //worker config
@@ -220,11 +220,11 @@ ThreadManager.prototype.use = function (middleware) {
   this.middleware.push(middleware);
 };
 
-ThreadManager.prototype.distributeWork = function (event, context, callback) {
+ThreadManager.prototype.distribute = function (event, context, callback) {
   let workHandler = callback || this.onMessage;
 
   if (workHandler === undefined || typeof workHandler !== "function") {
-    throw new Error('Cant distribute work without a function to handle its return value');
+    throw new Error('Cant distribute work without a function to handle its return value, please provide a callback or set a default event handler');
   } //if not all workers are not initialized we initialize one of them and assign it the work
 
 
@@ -264,9 +264,9 @@ ThreadManager.prototype.broadcast = function (event, context, callback) {
 ThreadManager.prototype.giveWork = function (worker, event, context) {
   worker.status = WorkerStatus.BUSY;
 
-  if (this.config.sendingMethod === "transferList") {
+  if (this.config.distributionMethod === "transferList") {
     worker.postMessage(context, [context]);
-  } else if (this.config.sendingMethod === 'json') {
+  } else if (this.config.distributionMethod === 'json') {
     let data = {
       event,
       context
@@ -285,7 +285,7 @@ ThreadManager.prototype.chooseWorker = function () {
     return this.workers[0];
   }
 
-  let assignedWorker;
+  let assignedWorker = undefined;
 
   switch (this.config.distributionMethod) {
     case 'round robin':
@@ -306,18 +306,15 @@ ThreadManager.prototype.chooseWorker = function () {
       break;
 
     case 'first idle':
-      let foundIdleWorker = false;
-
       for (let i = 0; i < this.workers.length; i++) {
         if (this.workers[i].status === WorkerStatus.IDLE) {
-          foundIdleWorker = true;
           assignedWorker = this.workers[i];
           break;
         }
       } //TODO: add a way to configure what to do as fallback, by now we assing it randomly via fallthrough to the next case;
 
 
-      if (foundIdleWorker) {
+      if (assignedWorker) {
         break;
       }
 
@@ -339,4 +336,4 @@ module.exports = ThreadManager;
 /***/ })
 /******/ ]);
 });
-//# sourceMappingURL=threadManager.js.map
+//# sourceMappingURL=ThreadManager.js.map

@@ -67,8 +67,8 @@ const ThreadManager = function (filePath, config, eHandler) {
 
 /**
  * 
- * @param {Number} amount 
- * @param {Function} [handler] 
+ * @param {Number} amount - number of workers you want to initialize
+ * @param {Function} [handler] - function that will handle worker responses by default
  */
 ThreadManager.prototype.initializeWorkers = function (amount, handler) {
     let initializedWorkers = 0;
@@ -80,6 +80,10 @@ ThreadManager.prototype.initializeWorkers = function (amount, handler) {
 };
 
 
+/**
+ * 
+ * @param {Function} [handler] - function that will handle worker responses by default
+ */
 ThreadManager.prototype.initializeWorker = function (handler) {
     if (this.workers.length < this.amountOfWorkers) {
         this.workers.push(new Worker(this.filePath));
@@ -98,10 +102,12 @@ ThreadManager.prototype.initializeWorker = function (handler) {
     }
 }
 
+
+
 ThreadManager.prototype._eventHandler = function(callback, workerid){
     if (callback) {
         return (message)=>{
-            this.workers[workerid].status = WorkerStatus.IDLE
+            this.workers[workerid].status = WorkerStatus.IDLE;
             for (let i = 0; i < this.middleware.length; i++) {
                 this.middleware[i](message);
             }
@@ -111,6 +117,11 @@ ThreadManager.prototype._eventHandler = function(callback, workerid){
 }
 
 
+
+/**
+ * 
+ * @param {Function} [handler] - function that will handle the responses of all workers if there are no other handlers with higher priority
+ */
 ThreadManager.prototype.setDefaultEventHandler = function (handler) {
     if (!handler || typeof handler !== 'function') {
         throw new Error('Expected a function as argument and got a ' + typeof handler);
@@ -120,10 +131,32 @@ ThreadManager.prototype.setDefaultEventHandler = function (handler) {
 };
 
 
+/**
+ * @param {Worker} worker - worker we want to change the handler of
+ * @param {Function} [handler] - function that will handle worker responses by default
+ */
+
 ThreadManager.prototype.setEventHandler = function (worker, handler) {
     worker.onmessage = this._eventHandler(handler, worker.id);
 }
 
+/**
+ * 
+ * @param {number} n - index of the worker
+ * @returns {Worker} - at index n
+ */
+
+ThreadManager.prototype.get = function(n){
+    return this.workers[n];
+}
+
+
+
+/**
+ * 
+ * @param {Function} middleware - function with signature (message: MessageEvent | RTCDataChannelEvent) => any
+ * 
+ */ 
 ThreadManager.prototype.use = function (middleware) {
     if (typeof middleware !== 'function') {
         throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof handler);
@@ -132,42 +165,52 @@ ThreadManager.prototype.use = function (middleware) {
 }
 
 
+/**
+ * 
+ * 
+ * 
+ */
 ThreadManager.prototype.distribute = function (event, context, callback) {
     let workHandler = callback || this.onMessage;
-    if (workHandler === undefined || typeof workHandler !== "function") {
-        throw new Error('Cant distribute work without a function to handle its return value');
-    }
+
 
     //if not all workers are not initialized we initialize one of them and assign it the work
     if (this.workers.length < this.amountOfWorkers && this.config.initialization === "delayed") {
-        return this.createAndGiveWork(workHandler, event, context);
+        if (workHandler === undefined || typeof workHandler !== "function") {
+            throw new Error('Cant distribute work without a function to handle its return value, please provide a callback or set a default event handler');
+        }else{
+            return this.createAndGiveWork(workHandler, event, context);
+        }
+
     }
 
     let assignedWorker = this.chooseWorker();
 
-    if (workHandler !== assignedWorker.onMessage) {
+    if (!workHandler && !assignedWorker.onmessage){
+        throw new Error('Cant distribute work without a function to handle its return value, please provide a callback or set a default event handler');
+    }else if( workHandler && workHandler!== assignedWorker.onmessage) {
         this.setEventHandler(assignedWorker, workHandler);
     }
     this.giveWork(assignedWorker, event, context);
 
 }
 
-
 ThreadManager.prototype.broadcast = function (event, context, callback) {
-    let workHandler = callback || this.onMessage;
-    if (workHandler === undefined || typeof workHandler !== "function") {
-        throw new Error('Cant distribute work without a function to handle its return value');
-    }
     if (this.workers.length < this.amountOfWorkers) {
         this.initializeWorkers();
     }
     for (let i = 0; i < this.workers.length; i++) {
+        let workHandler = callback || this.workers[i].onmes || this.onMessage ;
+        if (workHandler === undefined || typeof workHandler !== "function") {
+            throw new Error('Cant distribute work without a function to handle its return value');
+        }
         if (workHandler !== this.workers[i].onmessage) {
             this.setEventHandler(this.workers[i], workHandler);
         }
         this.giveWork(this.workers[i], event, context);
     }
 }
+
 
 ThreadManager.prototype.giveWork = function (worker, event, context) {
     worker.status = WorkerStatus.BUSY;
@@ -188,7 +231,7 @@ ThreadManager.prototype.chooseWorker = function () {
         return this.workers[0];
     }
 
-    let assignedWorker;
+    let assignedWorker = undefined;
     switch (this.config.distributionMethod) {
         case 'round robin':
             //If its the first time or we finished a round we distribute it to the first
@@ -205,16 +248,14 @@ ThreadManager.prototype.chooseWorker = function () {
             }
             break;
         case 'first idle':
-            let foundIdleWorker = false;
             for (let i = 0; i < this.workers.length; i++) {
                 if (this.workers[i].status === WorkerStatus.IDLE) {
-                    foundIdleWorker = true;
                     assignedWorker = this.workers[i];
                     break;
                 }
             }
             //TODO: add a way to configure what to do as fallback, by now we assing it randomly via fallthrough to the next case;
-            if (foundIdleWorker) {
+            if (assignedWorker) {
                 break;
             }
         default:

@@ -3,8 +3,9 @@ let hitCount = 0;
 let successfullyPassedContext = true;
 let middlewareExecutes = false;
 let middlewareCanMutateMessage = false;
+let undefinedVar = false;
 
-const myManager = new threadManager(
+const myManager = new ThreadManager(
     './workers/test.js',
     {
         amountOfWorkers: 10
@@ -18,10 +19,19 @@ const myManager = new threadManager(
     }
 );
 
+myManager.
+myManager.use((message)=>{
+    console.log('calling middleware 0');
+    const dummyVar = message.data.myNewProp;
+    if(!dummyVar){
+        undefinedVar = true;
+    }
+});
+
 myManager.use((message)=>{
     console.log('calling middleware 1');
     if(!middlewareExecutes) {middlewareExecutes = true;}
-
+    debugger;
     message.data = {
         myNewProp: 'Hello!'
     }
@@ -29,6 +39,7 @@ myManager.use((message)=>{
 
 myManager.use((message)=>{
     console.log('calling middleware 2, message is: ',message);
+    debugger;
     if(message.data.myNewProp && message.data.myNewProp === 'Hello!'){
         middlewareCanMutateMessage = true;
     }
@@ -52,6 +63,13 @@ setTimeout(()=>{
     }else{
         document.getElementById('contextTest').innerHTML = `✅SUCCESS: the worker got the right context`;
     }
+
+    if(!undefinedVar){
+        document.getElementById('undefinedTest').innerHTML = `❌FAILURE: myNewProp was already defined in the first middleware`;
+    }else{
+        document.getElementById('undefinedTest').innerHTML = `✅SUCCESS: myNewProp was not defined in the first middleware`;
+    }
+
 
     if(!middlewareExecutes){
         document.getElementById('middlewareCallingTest').innerHTML = `❌FAILURE: Middleware was not called`;
