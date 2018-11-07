@@ -1,7 +1,9 @@
 {
   "name": "@axc/thread-manager",
-  "version": "0.1.0",
-  "keywords": ["web workers"],
+  "version": "0.1.1",
+  "keywords": [
+    "web workers"
+  ],
   "description": "utility class to help managing web workers",
   "main": "dist/threadManager.js",
   "scripts": {
