@@ -1,7 +1,5 @@
 
 
-
-
 const WorkerStatus = {
     IDLE: Symbol(1),
     BUSY: Symbol(2)
@@ -156,7 +154,7 @@ ThreadManager.prototype.get = function(n){
  */ 
 ThreadManager.prototype.use = function (middleware) {
     if (typeof middleware !== 'function') {
-        throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof handler);
+        throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof middleware);
     }
     this.middleware.push(middleware);
 }
