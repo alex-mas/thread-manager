@@ -2,10 +2,9 @@
 let hitCount = 0;
 let successfullyPassedContext = true;
 let middlewareExecutes = false;
-let middlewareCanMutateMessage = false;
 let undefinedVar = false;
 
-const myManager = new ThreadManager(
+const myManager = new ThreadManager.ThreadManager(
     './workers/test.js',
     {
         amountOfWorkers: 10
@@ -19,34 +18,19 @@ const myManager = new ThreadManager(
     }
 );
 
-myManager.
-myManager.use((message)=>{
-    console.log('calling middleware 0');
-    const dummyVar = message.data.myNewProp;
-    if(!dummyVar){
-        undefinedVar = true;
-    }
-});
+
 
 myManager.use((message)=>{
     console.log('calling middleware 1');
     if(!middlewareExecutes) {middlewareExecutes = true;}
-    debugger;
     message.data = {
         myNewProp: 'Hello!'
     }
 });
 
-myManager.use((message)=>{
-    console.log('calling middleware 2, message is: ',message);
-    debugger;
-    if(message.data.myNewProp && message.data.myNewProp === 'Hello!'){
-        middlewareCanMutateMessage = true;
-    }
-});
 
 
-myManager.broadcast('testEvent','message from main thread');
+myManager.broadcastMessage('testEvent','message from main thread');
 
 
 
@@ -64,24 +48,12 @@ setTimeout(()=>{
         document.getElementById('contextTest').innerHTML = `✅SUCCESS: the worker got the right context`;
     }
 
-    if(!undefinedVar){
-        document.getElementById('undefinedTest').innerHTML = `❌FAILURE: myNewProp was already defined in the first middleware`;
-    }else{
-        document.getElementById('undefinedTest').innerHTML = `✅SUCCESS: myNewProp was not defined in the first middleware`;
-    }
-
-
     if(!middlewareExecutes){
         document.getElementById('middlewareCallingTest').innerHTML = `❌FAILURE: Middleware was not called`;
     }else{
         document.getElementById('middlewareCallingTest').innerHTML = `✅SUCCESS: Middleware was called`;
     }
 
-    if(!middlewareCanMutateMessage){
-        document.getElementById('middlewareMutatingTest').innerHTML = `❌FAILURE: Middleware was not able to bootstrap data into the message`;
-    }else{
-        document.getElementById('middlewareMutatingTest').innerHTML = `✅SUCCESS: Middleware was able to bootstrap data into the message`;
-    }
 }, 5000);
 
 

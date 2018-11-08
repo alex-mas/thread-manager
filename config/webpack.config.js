@@ -2,31 +2,30 @@
 var webpack = require('webpack');
 var path = require('path');
 var libraryName = 'ThreadManager';
-var outputFile = libraryName + '.js';
 
 const rootPath = path.join(__dirname, '../');
 
 var config =  env => ({
     mode: env.mode,
-    entry: rootPath + 'src/threadManager.js',
+    entry: rootPath + 'src/threadManager.ts',
     devtool: 'source-map',
     output: {
         path: rootPath + 'dist',
-        filename: outputFile,
+        filename: 'threadManager.min.js',
         library: libraryName,
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /(\.jsx|\.js)$/,
-                loader: 'babel-loader',
+                use: 'babel-loader',
                 exclude: /(node_modules)/
             },
             {
                 test: /(\.tsx|\.ts)$/,
-                loader: 'ts-loader',
+                use: 'ts-loader',
                 exclude: /(node_modules)/
             }
         ]

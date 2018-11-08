@@ -51,14 +51,14 @@ export interface WorkerMessage {
 
 
 export class ThreadManager {
-    config: Exclude<ThreadManagerConfig, 'amountOfOwrkers'>;
+    config: ThreadManagerConfig = defaultConfiguration;
     filePath: string;
-    middleware: Function[];
-    workers: EnhancedWorker[];
-    onMessage: Function;
-    onError: Function;
-    lastAssignedWorker: number;
-    construtor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: Function, onError?: Function) {
+    middleware: Function[] = [];
+    workers: EnhancedWorker[] = [];
+    onMessage?: Function;
+    onError?: Function;
+    lastAssignedWorker: number = -1;
+    constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: Function, onError?: Function) {
         if (!filepath) {
             throw new Error(
                 'can\'t initialize the thread manager without'
@@ -66,7 +66,6 @@ export class ThreadManager {
             );
         }
         this.filePath = filepath;
-        this.config = defaultConfiguration;
         if (config) {
             if (config.amountOfWorkers !== undefined) {
                 this.config.amountOfWorkers = config.amountOfWorkers;
@@ -86,6 +85,9 @@ export class ThreadManager {
         }
         if (onError && typeof onError === 'function') {
             this.onError = onError;
+        }
+        if(this.config.initializationStrategy === InitializationStrategy.AT_START){
+            this.initializeWorkers(this.config.amountOfWorkers);
         }
     }
     isCallbackDefined = () => {
@@ -155,7 +157,7 @@ export class ThreadManager {
         this.middleware.push(middleware);
     }
 
-    distribute = (event, payload) => {
+    sendMessage = (event: string, payload: any) => {
 
         //if not all workers are not initialized we initialize one of them and assign it the work
         if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
@@ -166,6 +168,17 @@ export class ThreadManager {
         this.giveWork(assignedWorker, event, payload);
 
     }
+
+
+    broadcastMessage = (event: string, payload: any)=> {
+        if (this.workers.length < this.config.amountOfWorkers) {
+            this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
+        }
+        for (let i = 0; i < this.workers.length; i++) {
+            this.giveWork(this.workers[i], event, payload);
+        }
+    }
+    
 
     giveWork = (worker: EnhancedWorker, type: string, payload: any) => {
         let data = { type, payload };
@@ -223,7 +236,9 @@ export class ThreadManager {
     }
     createAndGiveWork = (event: string, payload: any) => {
         const newWorker = this.initializeWorker();
-        this.giveWork(newWorker, event, payload);
+        if(newWorker){
+            this.giveWork(newWorker, event, payload);
+        }
     };
 
 }

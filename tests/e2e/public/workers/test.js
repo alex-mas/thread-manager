@@ -1,15 +1,15 @@
 
 
 
-onmessage = function (payload) {
-    const { event, context } = payload.data;
+onmessage = function (message) {
+    const { event, payload } = message.data;
     console.log('Message received from main script');
-    console.log('Payload received was: ', payload);
-    console.log('context received was: ', context);
+    console.log('Mesage received was: ', message);
+    console.log('payload received was: ', payload);
     console.log('Event received was: ', event);
-    console.log('echoing context back to the main script');
-    if (context === 'message from main thread') {
-        postMessage(true);
+    console.log('echoing payload back to the main script');
+    if (payload === 'message from main thread') {
+        postMessage(payload);
     } else {
         postMessage(false);
     }
