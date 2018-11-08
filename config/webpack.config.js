@@ -7,11 +7,11 @@ const rootPath = path.join(__dirname, '../');
 
 var config =  env => ({
     mode: env.mode,
-    entry: rootPath + 'src/threadManager.ts',
+    entry: rootPath + 'src/index.ts',
     devtool: 'source-map',
     output: {
         path: rootPath + 'dist',
-        filename: 'threadManager.min.js',
+        filename: 'index.min.js',
         library: libraryName,
         libraryTarget: 'umd',
         umdNamedDefine: true

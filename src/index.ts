@@ -1,4 +1,5 @@
 
+
 export enum WorkerStatus {
     IDLE = 1,
     BUSY = 2,
@@ -157,25 +158,25 @@ export class ThreadManager {
         this.middleware.push(middleware);
     }
 
-    sendMessage = (event: string, payload: any) => {
+    sendMessage = (type: string, payload: any) => {
 
         //if not all workers are not initialized we initialize one of them and assign it the work
         if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-            return this.createAndGiveWork(event, payload);
+            return this.createAndGiveWork(type, payload);
 
         }
         let assignedWorker = this.chooseWorker();
-        this.giveWork(assignedWorker, event, payload);
+        this.giveWork(assignedWorker, type, payload);
 
     }
 
 
-    broadcastMessage = (event: string, payload: any)=> {
+    broadcastMessage = (type: string, payload: any)=> {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
         for (let i = 0; i < this.workers.length; i++) {
-            this.giveWork(this.workers[i], event, payload);
+            this.giveWork(this.workers[i], type, payload);
         }
     }
     

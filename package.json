@@ -5,7 +5,7 @@
     "web workers"
   ],
   "description": "utility class to help managing web workers",
-  "main": "dist/threadManager.min.js",
+  "main": "dist/index.min.js",
   "scripts": {
     "build": "webpack --config config/webpack.config.js --env.mode=development",
     "release": "webpack --config config/webpack.config.js -p --env.mode=production",
