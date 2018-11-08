@@ -7,6 +7,7 @@ var outputFile = libraryName + '.js';
 const rootPath = path.join(__dirname, '../');
 
 var config =  env => ({
+    mode: env.mode,
     entry: rootPath + 'src/threadManager.js',
     devtool: 'source-map',
     output: {
@@ -21,7 +22,12 @@ var config =  env => ({
             {
                 test: /(\.jsx|\.js)$/,
                 loader: 'babel-loader',
-                exclude: /(node_modules|bower_components)/
+                exclude: /(node_modules)/
+            },
+            {
+                test: /(\.tsx|\.ts)$/,
+                loader: 'ts-loader',
+                exclude: /(node_modules)/
             }
         ]
     },
