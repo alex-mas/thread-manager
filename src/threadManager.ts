@@ -123,7 +123,7 @@ export class ThreadManager {
         }
       
     }
-    errorHandler = function(event: ErrorEvent){
+    errorHandler = (event: ErrorEvent)=>{
         //TODO: allow middleware to handle errors too
         //this.status = WorkerStatus.CRASHED;
         if(this.onError){
