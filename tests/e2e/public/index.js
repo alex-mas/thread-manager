@@ -20,17 +20,18 @@ const myManager = new ThreadManager.ThreadManager(
 
 
 
-myManager.use((message)=>{
+myManager.use((message, next)=>{
     console.log('calling middleware 1');
     if(!middlewareExecutes) {middlewareExecutes = true;}
     message.data = {
         myNewProp: 'Hello!'
     }
+    next();
 });
 
 
 
-myManager.broadcastMessage('testEvent','message from main thread');
+myManager.broadcastMessage('message from main thread');
 
 
 

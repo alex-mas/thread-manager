@@ -134,7 +134,7 @@ export class ThreadManager {
         const that = this;
         if(event.currentTarget){
             const target = event.currentTarget as EnhancedWorker;
-            if(isError){
+            if(isError(event)){
                 target.status = WorkerStatus.CRASHED;
             }else{
                 target.status = WorkerStatus.IDLE;
@@ -157,6 +157,7 @@ export class ThreadManager {
                 func = that.getCurrentHandler(event,index);
             }
         })();
+        next();
 
     }
     setMessageHandler = (eHandler: MessageHandler) => {
