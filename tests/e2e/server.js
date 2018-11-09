@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 
-fs.copyFileSync('./dist/threadManager.js', './tests/e2e/public/lib/threadManager.js');
+fs.copyFileSync('./dist/index.min.js', './tests/e2e/public/lib/threadManager.js');
 
 
 const app = express();

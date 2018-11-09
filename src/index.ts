@@ -132,7 +132,14 @@ export class ThreadManager {
     messageHandler = (event: MessageEvent | ErrorEvent)=>{
         //generators must be regular functions, thus we need to store the context for usage inside the generator
         const that = this;
-
+        if(event.currentTarget){
+            const target = event.currentTarget as EnhancedWorker;
+            if(isError){
+                target.status = WorkerStatus.CRASHED;
+            }else{
+                target.status = WorkerStatus.IDLE;
+            } 
+        }
         //the functions steps the iterator one time forward and then passes itself to the handler returned by the iterator
         const next = () => {
             const currentHandler = middlewareIterator.next();
@@ -261,4 +268,5 @@ export class ThreadManager {
     };
 
 }
+
 export default ThreadManager;
