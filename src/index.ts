@@ -177,39 +177,38 @@ export class ThreadManager {
         this.middleware.push(middleware);
     }
 
-    sendMessage = (type: string, payload: any) => {
+    sendMessage = (payload: any) => {
 
         //if not all workers are not initialized we initialize one of them and assign it the work
         if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-            return this.createAndGiveWork(type, payload);
+            return this.createAndGiveWork(payload);
 
         }
         let assignedWorker = this.chooseWorker();
-        this.giveWork(assignedWorker, type, payload);
+        this.giveWork(assignedWorker, payload);
 
     }
 
 
-    broadcastMessage = (type: string, payload: any) => {
+    broadcastMessage = (payload: any) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
         for (let i = 0; i < this.workers.length; i++) {
-            this.giveWork(this.workers[i], type, payload);
+            this.giveWork(this.workers[i], payload);
         }
     }
 
 
-    giveWork = (worker: EnhancedWorker, type: string, payload: any) => {
-        let data = { type, payload };
+    giveWork = (worker: EnhancedWorker, payload: any) => {
         if (this.config.sendingStrategy === MessageSendingStrategy.TRANSFER_LIST) {
             //TODO: keep same laoyut as other sending methods
             worker.postMessage(payload, [payload]);
         } else if (this.config.sendingStrategy === MessageSendingStrategy.JSON) {
 
-            worker.postMessage(JSON.stringify(data));
+            worker.postMessage(JSON.stringify(payload));
         } else {
-            worker.postMessage(data);
+            worker.postMessage(payload);
         }
         worker.status = WorkerStatus.BUSY;
     }
@@ -254,10 +253,10 @@ export class ThreadManager {
         }
         return assignedWorker;
     }
-    createAndGiveWork = (event: string, payload: any) => {
+    createAndGiveWork = (payload: any) => {
         const newWorker = this.initializeWorker();
         if (newWorker) {
-            this.giveWork(newWorker, event, payload);
+            this.giveWork(newWorker, payload);
         }
     };
 
