@@ -50,16 +50,23 @@ export interface WorkerMessage {
 }
 
 
+const isError = (event: ErrorEvent | MessageEvent):event is ErrorEvent =>{
+    return event instanceof ErrorEvent;
+}
+
+
+export type MessageHandler =(event: MessageEvent)=>any;
+export type ErrorHandler = (event: ErrorEvent)=>any;
 
 export class ThreadManager {
     config: ThreadManagerConfig = defaultConfiguration;
     filePath: string;
     middleware: Function[] = [];
     workers: EnhancedWorker[] = [];
-    onMessage?: Function;
-    onError?: Function;
+    onMessage?: MessageHandler;
+    onError?: ErrorHandler; 
     lastAssignedWorker: number = -1;
-    constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: Function, onError?: Function) {
+    constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: MessageHandler, onError?: ErrorHandler) {
         if (!filepath) {
             throw new Error(
                 'can\'t initialize the thread manager without'
@@ -108,79 +115,51 @@ export class ThreadManager {
             const worker = this.workers[index];
             worker.id = index;
             worker.status = WorkerStatus.IDLE;
-            worker.onmessage = this.eventHandler;
+            worker.onmessage = this.messageHandler;
             return worker;
         } else {
             console.warn('Adding more threads that exceed the configured ammount, change the configured ammount instead');
         }
     }
-    //TODO: Return current handler diferently in function of the type of event
-    // if error, all middleware will be iterated and as last onError will be called
-    //else middleware will be iterated and onMessage will be called
-    _wip_messageHandler = (event: MessageEvent | ErrorEvent)=>{
+    getCurrentHandler = (event: MessageEvent | ErrorEvent, index: number)=>{
+        if(isError(event)){
+            return this.middleware[index] || this.onError;
+        }else{
+            return this.middleware[index] || this.onMessage;
+        }
+      
+    }
+    messageHandler = (event: MessageEvent | ErrorEvent)=>{
+        //generators must be regular functions, thus we need to store the context for usage inside the generator
+        const that = this;
+
+        //the functions steps the iterator one time forward and then passes itself to the handler returned by the iterator
         const next = () => {
-            const currentHandler = middleware.next();
+            const currentHandler = middlewareIterator.next();
             if(!currentHandler.done){
                 currentHandler.value(event, next);
             }
         }
-        const getCurrentHandler = (index: number)=>{
-            return this.middleware[index] || this.onMessage;
-        }
 
-        const middleware = (function* () {
+        const middlewareIterator = (function* () {
             let index = 0;
-            let func = getCurrentHandler(index);
+            let func = that.getCurrentHandler(event,index);
             while(func){
                 yield func;
                 index++;
-                func = getCurrentHandler(index);
+                func = that.getCurrentHandler(event,index);
             }
-     
         })();
 
     }
-    eventHandler = (event: MessageEvent) => {
-
-        const next = () => {
-            const currentHandler = middleware.next();
-            if(!currentHandler.done){
-                currentHandler.value(event, next);
-            }
-        }
-        const getCurrentHandler = (index: number)=>{
-            return this.middleware[index] || this.onMessage;
-        }
-
-        const middleware = (function* () {
-            let index = 0;
-            let func = getCurrentHandler(index);
-            while(func){
-                yield func;
-                index++;
-                func = getCurrentHandler(index);
-            }
-     
-        })();
-        //this.status  = WorkerStatus.IDLE;
-        next();
-
-    }
-    errorHandler = (event: ErrorEvent) => {
-        //TODO: allow middleware to handle errors too
-        //this.status = WorkerStatus.CRASHED;
-        if (this.onError) {
-            this.onError(event);
-        }
-    };
-    setMessageHandler = (eHandler: Function) => {
+    setMessageHandler = (eHandler: MessageHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
         }
         this.onMessage = eHandler;
     };
 
-    setErrorHandler = (eHandler: ErrorEventHandler) => {
+    setErrorHandler = (eHandler: ErrorHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
         }
