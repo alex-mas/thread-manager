@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>WorkerStatus | @axc/thread-manager</title>
+	<title>InitializationStrategy | @axc/thread-manager</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_threadmanager_.html">&quot;threadManager&quot;</a>
+					<a href="../modules/_index_.html">&quot;index&quot;</a>
 				</li>
 				<li>
-					<a href="_threadmanager_.workerstatus.html">WorkerStatus</a>
+					<a href="_index_.initializationstrategy.html">InitializationStrategy</a>
 				</li>
 			</ul>
-			<h1>Enumeration WorkerStatus</h1>
+			<h1>Enumeration InitializationStrategy</h1>
 		</div>
 	</div>
 </header>
@@ -76,9 +76,8 @@
 						<section class="tsd-index-section ">
 							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.workerstatus.html#busy" class="tsd-kind-icon">BUSY</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.workerstatus.html#crashed" class="tsd-kind-icon">CRASHED</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.workerstatus.html#idle" class="tsd-kind-icon">IDLE</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.initializationstrategy.html#at_start" class="tsd-kind-icon">AT_<wbr>START</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.initializationstrategy.html#delayed" class="tsd-kind-icon">DELAYED</a></li>
 							</ul>
 						</section>
 					</div>
@@ -87,32 +86,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Enumeration members</h2>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="busy" class="tsd-anchor"></a>
-					<h3>BUSY</h3>
-					<div class="tsd-signature tsd-kind-icon">BUSY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;2</span></div>
+					<a name="at_start" class="tsd-anchor"></a>
+					<h3>AT_<wbr>START</h3>
+					<div class="tsd-signature tsd-kind-icon">AT_<wbr>START<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;AT_START&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L4">threadManager.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L27">index.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="crashed" class="tsd-anchor"></a>
-					<h3>CRASHED</h3>
-					<div class="tsd-signature tsd-kind-icon">CRASHED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;3</span></div>
+					<a name="delayed" class="tsd-anchor"></a>
+					<h3>DELAYED</h3>
+					<div class="tsd-signature tsd-kind-icon">DELAYED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;DELAYED&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L5">threadManager.ts:5</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="idle" class="tsd-anchor"></a>
-					<h3>IDLE</h3>
-					<div class="tsd-signature tsd-kind-icon">IDLE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;1</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L3">threadManager.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L28">index.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,53 +114,59 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_threadmanager_.html">"thread<wbr>Manager"</a>
+						<a href="../modules/_index_.html">"index"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.initializationstrategy.html" class="tsd-kind-icon">Initialization<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.messagesendingstrategy.html" class="tsd-kind-icon">Message<wbr>Sending<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.workdistributionstrategy.html" class="tsd-kind-icon">Work<wbr>Distribution<wbr>Strategy</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.workerstatus.html" class="tsd-kind-icon">Worker<wbr>Status</a>
+						<a href="_index_.initializationstrategy.html" class="tsd-kind-icon">Initialization<wbr>Strategy</a>
 						<ul>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.workerstatus.html#busy" class="tsd-kind-icon">BUSY</a>
+								<a href="_index_.initializationstrategy.html#at_start" class="tsd-kind-icon">AT_<wbr>START</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.workerstatus.html#crashed" class="tsd-kind-icon">CRASHED</a>
-							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.workerstatus.html#idle" class="tsd-kind-icon">IDLE</a>
+								<a href="_index_.initializationstrategy.html#delayed" class="tsd-kind-icon">DELAYED</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="_index_.messagesendingstrategy.html" class="tsd-kind-icon">Message<wbr>Sending<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="_index_.workdistributionstrategy.html" class="tsd-kind-icon">Work<wbr>Distribution<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="_index_.workerstatus.html" class="tsd-kind-icon">Worker<wbr>Status</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_threadmanager_.threadmanager.html" class="tsd-kind-icon">Thread<wbr>Manager</a>
+						<a href="../classes/_index_.threadmanager.html" class="tsd-kind-icon">Thread<wbr>Manager</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.enhancedworker.html" class="tsd-kind-icon">Enhanced<wbr>Worker</a>
+						<a href="../interfaces/_index_.enhancedworker.html" class="tsd-kind-icon">Enhanced<wbr>Worker</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.threadmanagerconfig.html" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Config</a>
+						<a href="../interfaces/_index_.threadmanagerconfig.html" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.workermessage.html" class="tsd-kind-icon">Worker<wbr>Message</a>
+						<a href="../interfaces/_index_.workermessage.html" class="tsd-kind-icon">Worker<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_index_.html#errorhandler" class="tsd-kind-icon">Error<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_index_.html#messagehandler" class="tsd-kind-icon">Message<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_index_.html#iserror" class="tsd-kind-icon">is<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_threadmanager_.html#defaultconfiguration" class="tsd-kind-icon">default<wbr>Configuration</a>
+						<a href="../modules/_index_.html#defaultconfiguration" class="tsd-kind-icon">default<wbr>Configuration</a>
 					</li>
 				</ul>
 			</nav>

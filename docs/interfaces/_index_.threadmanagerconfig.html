@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MessageSendingStrategy | @axc/thread-manager</title>
+	<title>ThreadManagerConfig | @axc/thread-manager</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,63 +56,82 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_threadmanager_.html">&quot;threadManager&quot;</a>
+					<a href="../modules/_index_.html">&quot;index&quot;</a>
 				</li>
 				<li>
-					<a href="_threadmanager_.messagesendingstrategy.html">MessageSendingStrategy</a>
+					<a href="_index_.threadmanagerconfig.html">ThreadManagerConfig</a>
 				</li>
 			</ul>
-			<h1>Enumeration MessageSendingStrategy</h1>
+			<h1>Interface ThreadManagerConfig</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">ThreadManagerConfig</span>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumeration members</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.messagesendingstrategy.html#default" class="tsd-kind-icon">DEFAULT</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.messagesendingstrategy.html#json" class="tsd-kind-icon">JSON</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_threadmanager_.messagesendingstrategy.html#transfer_list" class="tsd-kind-icon">TRANSFER_<wbr>LIST</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_index_.threadmanagerconfig.html#amountofworkers" class="tsd-kind-icon">amount<wbr>OfWorkers</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_index_.threadmanagerconfig.html#distributionstrategy" class="tsd-kind-icon">distribution<wbr>Strategy</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_index_.threadmanagerconfig.html#initializationstrategy" class="tsd-kind-icon">initialization<wbr>Strategy</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_index_.threadmanagerconfig.html#sendingstrategy" class="tsd-kind-icon">sending<wbr>Strategy</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Enumeration members</h2>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="default" class="tsd-anchor"></a>
-					<h3>DEFAULT</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;DEFAULT&quot;</span></div>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="amountofworkers" class="tsd-anchor"></a>
+					<h3>amount<wbr>OfWorkers</h3>
+					<div class="tsd-signature tsd-kind-icon">amount<wbr>OfWorkers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L15">threadManager.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L35">index.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="json" class="tsd-anchor"></a>
-					<h3>JSON</h3>
-					<div class="tsd-signature tsd-kind-icon">JSON<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;JSON&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="distributionstrategy" class="tsd-anchor"></a>
+					<h3>distribution<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">distribution<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.workdistributionstrategy.html" class="tsd-signature-type">WorkDistributionStrategy</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L17">threadManager.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L32">index.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="transfer_list" class="tsd-anchor"></a>
-					<h3>TRANSFER_<wbr>LIST</h3>
-					<div class="tsd-signature tsd-kind-icon">TRANSFER_<wbr>LIST<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;TRANSFER_LIST&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="initializationstrategy" class="tsd-anchor"></a>
+					<h3>initialization<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">initialization<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.initializationstrategy.html" class="tsd-signature-type">InitializationStrategy</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/5e48545/src/threadManager.ts#L16">threadManager.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L33">index.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="sendingstrategy" class="tsd-anchor"></a>
+					<h3>sending<wbr>Strategy</h3>
+					<div class="tsd-signature tsd-kind-icon">sending<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.messagesendingstrategy.html" class="tsd-signature-type">MessageSendingStrategy</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/da246c9/src/index.ts#L34">index.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -125,53 +144,65 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_threadmanager_.html">"thread<wbr>Manager"</a>
+						<a href="../modules/_index_.html">"index"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.initializationstrategy.html" class="tsd-kind-icon">Initialization<wbr>Strategy</a>
+						<a href="../enums/_index_.initializationstrategy.html" class="tsd-kind-icon">Initialization<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_index_.messagesendingstrategy.html" class="tsd-kind-icon">Message<wbr>Sending<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_index_.workdistributionstrategy.html" class="tsd-kind-icon">Work<wbr>Distribution<wbr>Strategy</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_index_.workerstatus.html" class="tsd-kind-icon">Worker<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_index_.threadmanager.html" class="tsd-kind-icon">Thread<wbr>Manager</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_index_.enhancedworker.html" class="tsd-kind-icon">Enhanced<wbr>Worker</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.messagesendingstrategy.html" class="tsd-kind-icon">Message<wbr>Sending<wbr>Strategy</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_index_.threadmanagerconfig.html" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Config</a>
 						<ul>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.messagesendingstrategy.html#default" class="tsd-kind-icon">DEFAULT</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_index_.threadmanagerconfig.html#amountofworkers" class="tsd-kind-icon">amount<wbr>OfWorkers</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.messagesendingstrategy.html#json" class="tsd-kind-icon">JSON</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_index_.threadmanagerconfig.html#distributionstrategy" class="tsd-kind-icon">distribution<wbr>Strategy</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_threadmanager_.messagesendingstrategy.html#transfer_list" class="tsd-kind-icon">TRANSFER_<wbr>LIST</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_index_.threadmanagerconfig.html#initializationstrategy" class="tsd-kind-icon">initialization<wbr>Strategy</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_index_.threadmanagerconfig.html#sendingstrategy" class="tsd-kind-icon">sending<wbr>Strategy</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.workdistributionstrategy.html" class="tsd-kind-icon">Work<wbr>Distribution<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="_threadmanager_.workerstatus.html" class="tsd-kind-icon">Worker<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_threadmanager_.threadmanager.html" class="tsd-kind-icon">Thread<wbr>Manager</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.enhancedworker.html" class="tsd-kind-icon">Enhanced<wbr>Worker</a>
+						<a href="_index_.workermessage.html" class="tsd-kind-icon">Worker<wbr>Message</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.threadmanagerconfig.html" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Config</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_index_.html#errorhandler" class="tsd-kind-icon">Error<wbr>Handler</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_threadmanager_.workermessage.html" class="tsd-kind-icon">Worker<wbr>Message</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_index_.html#messagehandler" class="tsd-kind-icon">Message<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_index_.html#iserror" class="tsd-kind-icon">is<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_threadmanager_.html#defaultconfiguration" class="tsd-kind-icon">default<wbr>Configuration</a>
+						<a href="../modules/_index_.html#defaultconfiguration" class="tsd-kind-icon">default<wbr>Configuration</a>
 					</li>
 				</ul>
 			</nav>
