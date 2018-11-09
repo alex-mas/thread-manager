@@ -40,4 +40,4 @@ onmessage = function(e) {
 
 ## Documentation
 
-You can check the documentation of [here](https://alex-mas.github.io/thread-manager/)
+You can check the documentation [here](https://alex-mas.github.io/thread-manager/docs)
