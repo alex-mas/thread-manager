@@ -31,28 +31,30 @@ export interface WorkerMessage {
     type: string;
     payload: any;
 }
+export declare type MessageHandler = (event: MessageEvent) => any;
+export declare type ErrorHandler = (event: ErrorEvent) => any;
 export declare class ThreadManager {
     config: ThreadManagerConfig;
     filePath: string;
     middleware: Function[];
     workers: EnhancedWorker[];
-    onMessage?: Function;
-    onError?: Function;
+    onMessage?: MessageHandler;
+    onError?: ErrorHandler;
     lastAssignedWorker: number;
-    constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: Function, onError?: Function);
+    constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: MessageHandler, onError?: ErrorHandler);
     isCallbackDefined: () => boolean;
     initializeWorkers: (amount: number) => void;
     initializeWorker: () => EnhancedWorker | undefined;
-    eventHandler: (event: MessageEvent) => void;
-    errorHandler: (event: ErrorEvent) => void;
-    setMessageHandler: (eHandler: Function) => void;
-    setErrorHandler: (eHandler: ErrorEventHandler) => void;
+    getCurrentHandler: (event: MessageEvent | ErrorEvent, index: number) => Function;
+    messageHandler: (event: MessageEvent | ErrorEvent) => void;
+    setMessageHandler: (eHandler: MessageHandler) => void;
+    setErrorHandler: (eHandler: ErrorHandler) => void;
     get: (n: number) => EnhancedWorker | undefined;
     use: (middleware?: Function | undefined) => void;
-    sendMessage: (type: string, payload: any) => void;
-    broadcastMessage: (type: string, payload: any) => void;
-    giveWork: (worker: EnhancedWorker, type: string, payload: any) => void;
+    sendMessage: (payload: any) => void;
+    broadcastMessage: (payload: any) => void;
+    giveWork: (worker: EnhancedWorker, payload: any) => void;
     chooseWorker: () => EnhancedWorker;
-    createAndGiveWork: (event: string, payload: any) => void;
+    createAndGiveWork: (payload: any) => void;
 }
 export default ThreadManager;
