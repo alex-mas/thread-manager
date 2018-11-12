@@ -7,6 +7,21 @@ export interface EnhancedWorker extends Worker {
     id: number;
     status: WorkerStatus;
 }
+/**
+ *
+ *
+ * The payload provided to sendMessage and broadcastMessage must abid the assumptions of the selected sending strategy
+ *
+ * If the sending strategy is TRANSFER_LIST => payload must be transferable (check https://developer.mozilla.org/en-US/docs/Web/API/Transferable)
+ *
+ * If the sending strategy is JSON => payload should be serializable (no custom objects)
+ *
+ * Else the payload will be passed as is to the worker, the browser will then perform the
+ * structured clone algorithm to get the data on the worker (check https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)
+ *
+ *
+ *
+ */
 export declare enum MessageSendingStrategy {
     DEFAULT = "DEFAULT",
     TRANSFER_LIST = "TRANSFER_LIST",

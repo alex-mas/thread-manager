@@ -12,6 +12,24 @@ export interface EnhancedWorker extends Worker {
     status: WorkerStatus
 }
 
+
+
+
+/**
+ * 
+ * 
+ * The payload provided to sendMessage and broadcastMessage must abid the assumptions of the selected sending strategy
+ * 
+ * If the sending strategy is TRANSFER_LIST => payload must be transferable (check https://developer.mozilla.org/en-US/docs/Web/API/Transferable)
+ * 
+ * If the sending strategy is JSON => payload should be serializable (no custom objects)
+ * 
+ * Else the payload will be passed as is to the worker, the browser will then perform the 
+ * structured clone algorithm to get the data on the worker (check https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)
+ * 
+ * 
+ * 
+ */
 export enum MessageSendingStrategy {
     DEFAULT = 'DEFAULT',
     TRANSFER_LIST = 'TRANSFER_LIST',
@@ -50,13 +68,13 @@ export interface WorkerMessage {
 }
 
 
-const isError = (event: ErrorEvent | MessageEvent):event is ErrorEvent =>{
+const isError = (event: ErrorEvent | MessageEvent): event is ErrorEvent => {
     return event instanceof ErrorEvent;
 }
 
 
-export type MessageHandler =(event: MessageEvent)=>any;
-export type ErrorHandler = (event: ErrorEvent)=>any;
+export type MessageHandler = (event: MessageEvent) => any;
+export type ErrorHandler = (event: ErrorEvent) => any;
 
 export class ThreadManager {
     config: ThreadManagerConfig = defaultConfiguration;
@@ -64,7 +82,7 @@ export class ThreadManager {
     middleware: Function[] = [];
     workers: EnhancedWorker[] = [];
     onMessage?: MessageHandler;
-    onError?: ErrorHandler; 
+    onError?: ErrorHandler;
     lastAssignedWorker: number = -1;
     constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: MessageHandler, onError?: ErrorHandler) {
         if (!filepath) {
@@ -74,18 +92,11 @@ export class ThreadManager {
             );
         }
         this.filePath = filepath;
+        //TODO: Validate config parameter object in dev mode before merging into default config
         if (config) {
-            if (config.amountOfWorkers !== undefined) {
-                this.config.amountOfWorkers = config.amountOfWorkers;
-            }
-            if (config.distributionStrategy) {
-                this.config.distributionStrategy = config.distributionStrategy;
-            }
-            if (config.initializationStrategy) {
-                this.config.initializationStrategy = config.initializationStrategy;
-            }
-            if (config.sendingStrategy) {
-                this.config.sendingStrategy = config.sendingStrategy;
+            this.config = {
+                ...this.config,
+                ...config
             }
         }
         if (onMessage && typeof onMessage === 'function') {
@@ -121,40 +132,40 @@ export class ThreadManager {
             console.warn('Adding more threads that exceed the configured ammount, change the configured ammount instead');
         }
     }
-    getCurrentHandler = (event: MessageEvent | ErrorEvent, index: number)=>{
-        if(isError(event)){
+    getCurrentHandler = (event: MessageEvent | ErrorEvent, index: number) => {
+        if (isError(event)) {
             return this.middleware[index] || this.onError;
-        }else{
+        } else {
             return this.middleware[index] || this.onMessage;
         }
-      
+
     }
-    messageHandler = (event: MessageEvent | ErrorEvent)=>{
+    messageHandler = (event: MessageEvent | ErrorEvent) => {
         //generators must be regular functions, thus we need to store the context for usage inside the generator
         const that = this;
-        if(event.currentTarget){
+        if (event.currentTarget) {
             const target = event.currentTarget as EnhancedWorker;
-            if(isError(event)){
+            if (isError(event)) {
                 target.status = WorkerStatus.CRASHED;
-            }else{
+            } else {
                 target.status = WorkerStatus.IDLE;
-            } 
+            }
         }
         //the functions steps the iterator one time forward and then passes itself to the handler returned by the iterator
-        const next = () => {
+        const next = function() {
             const currentHandler = middlewareIterator.next();
-            if(!currentHandler.done){
-                currentHandler.value(event, next);
+            if (!currentHandler.done) {
+                currentHandler.value(event, next, ...arguments);
             }
         }
 
         const middlewareIterator = (function* () {
             let index = 0;
-            let func = that.getCurrentHandler(event,index);
-            while(func){
+            let func = that.getCurrentHandler(event, index);
+            while (func) {
                 yield func;
                 index++;
-                func = that.getCurrentHandler(event,index);
+                func = that.getCurrentHandler(event, index);
             }
         })();
         next();
@@ -207,13 +218,10 @@ export class ThreadManager {
         }
     }
 
-
     giveWork = (worker: EnhancedWorker, payload: any) => {
         if (this.config.sendingStrategy === MessageSendingStrategy.TRANSFER_LIST) {
-            //TODO: keep same laoyut as other sending methods
             worker.postMessage(payload, [payload]);
         } else if (this.config.sendingStrategy === MessageSendingStrategy.JSON) {
-
             worker.postMessage(JSON.stringify(payload));
         } else {
             worker.postMessage(payload);

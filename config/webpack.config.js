@@ -6,7 +6,7 @@ var libraryName = 'ThreadManager';
 const rootPath = path.join(__dirname, '../');
 
 var config =  env => ({
-    mode: env.mode,
+    mode: env.NODE_ENV,
     entry: rootPath + 'src/index.ts',
     devtool: 'source-map',
     output: {
@@ -29,12 +29,7 @@ var config =  env => ({
                 exclude: /(node_modules)/
             }
         ]
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            'THREADMANAGER_ENV': env.mode
-        })
-    ]
+    }
 });
 
 module.exports = config;

@@ -1,18 +1,23 @@
-
 let hitCount = 0;
 let successfullyPassedContext = true;
 let middlewareExecutes = false;
 let undefinedVar = false;
+let lastMiddlewareHitCount = 0;
+let extraVarPassed = false;
 
 const myManager = new ThreadManager.ThreadManager(
-    './workers/test.js',
-    {
+    './workers/test.js', {
         amountOfWorkers: 10
     },
-    (message) => {
-        console.log('Obtained a message from the worker thread: ',message);
+    (message, next, extraVar) => {
+        console.log("reached the end of execution of middleware and extra var is",extraVar);
+        console.log('Obtained a message from the worker thread: ', message);
         hitCount++;
-        if(!message.data){
+        if(extraVar === "hello world"){
+            extraVarPassed = true;
+        }
+
+        if (!message.data) {
             successfullyPassedContext = false;
         }
     }
@@ -20,40 +25,72 @@ const myManager = new ThreadManager.ThreadManager(
 
 
 
-myManager.use((message, next)=>{
+myManager.use((message, next) => {
     console.log('calling middleware 1');
-    if(!middlewareExecutes) {middlewareExecutes = true;}
-    message.data = {
-        myNewProp: 'Hello!'
+    if (!middlewareExecutes) {
+        middlewareExecutes = true;
     }
     next();
 });
 
+myManager.use((message, next) => {
+    console.log('calling last middleware');
+    if (hitCount < 5) {
+        next();
+    }
+});
 
+myManager.use((message, next) => {
+    lastMiddlewareHitCount++;
+    next("hello world");
+});
 
 myManager.broadcastMessage('message from main thread');
 
 
 
-setTimeout(()=>{
+setTimeout(() => {
 
-    if(hitCount !== 10){
-        document.getElementById('hitCountTest').innerHTML = `❌FAILURE: the event handler should have triggered 10 times, instead it just triggered ${hitCount} times`;
-    }else{
-        document.getElementById('hitCountTest').innerHTML = `✅SUCCESS: the event handler triggered 10 times`
+    const testResults = [];
+    if (hitCount !== 5) {
+        testResults.push(
+            `❌FAILURE: the event handler should have triggered 5 times,instead it just triggered ${hitCount} times`
+        );
+    } else {
+        testResults.push(`✅SUCCESS: the event handler triggered 5 times`) 
     }
 
-    if(!successfullyPassedContext){
-        document.getElementById('contextTest').innerHTML = `❌FAILURE: the event handler should have passed the context properly to the worker's data property`;
-    }else{
-        document.getElementById('contextTest').innerHTML = `✅SUCCESS: the worker got the right context`;
+    if (!successfullyPassedContext) {
+        testResults.push(`❌FAILURE: the event handler should have passed the context properly to the worker's data property`);
+    } else {
+        testResults.push(`✅SUCCESS: the worker got the right context`);
     }
 
-    if(!middlewareExecutes){
-        document.getElementById('middlewareCallingTest').innerHTML = `❌FAILURE: Middleware was not called`;
-    }else{
-        document.getElementById('middlewareCallingTest').innerHTML = `✅SUCCESS: Middleware was called`;
+    if (!middlewareExecutes) {
+        testResults.push(`❌FAILURE: Middleware was not called`);
+    } else {
+        testResults.push(`✅SUCCESS: Middleware was called`);
     }
+
+
+    if (lastMiddlewareHitCount !== 5) {
+        testResults.push(`❌FAILURE: the last middleware should only be called 5 times, instead it was called ${lastMiddlewareHitCount} times`) 
+    } else {
+        testResults.push( `✅SUCCESS: the last middleware was called 5 times`)
+    }
+
+    if(extraVarPassed){
+        testResults.push( `✅SUCCESS: extra variables are passed successfully to next handlers`)
+    }else{
+        testResults.push(`❌FAILURE: extra variables not passed to next`);
+    }
+
+   
+    testResults.map((result) => {
+        const node = document.createElement("div");
+        node.innerHTML = result;
+        document.getElementById('testResults').appendChild(node);
+    });
 
 }, 5000);
 
