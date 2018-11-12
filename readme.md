@@ -2,7 +2,7 @@
 > Library designed to facilitate using multiple WebWorkers
 
 
-Thread manager implements a simple api that builds on top of javascript WebWorkers to allow things such as middleware and work distribution.
+Thread manager offers features such as a middleware system and different work distribution methods to optimize the load across the pools of workers. It works in web and electron environments.
 
 # Install
 
@@ -41,3 +41,5 @@ onmessage = function(e) {
 ## Documentation
 
 You can check the documentation [here](https://alex-mas.github.io/thread-manager/docs)
+
+
