@@ -197,32 +197,43 @@ export class ThreadManager {
     }
 
     sendMessage = (payload: any) => {
-
+        let parsedPayload = this.parsePayload(payload);
+        if(this.config.sendingStrategy)
         //if not all workers are not initialized we initialize one of them and assign it the work
         if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-            return this.createAndGiveWork(payload);
-
+            return this.createAndGiveWork(parsedPayload);
         }
         let assignedWorker = this.chooseWorker();
-        this.giveWork(assignedWorker, payload);
+        this.giveWork(assignedWorker, parsedPayload);
 
     }
 
+    parsePayload = (payload: any): any=>{
+        if(this.config.sendingStrategy === MessageSendingStrategy.JSON){
+            return this.stringifyPayload(payload);
+        }else{
+            return payload;
+        }
+    }
+    stringifyPayload = (payload: any): string=>{
+        return JSON.stringify(payload);
+    }
 
     broadcastMessage = (payload: any) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
+
+        let parsedPayload = this.parsePayload(payload);
         for (let i = 0; i < this.workers.length; i++) {
-            this.giveWork(this.workers[i], payload);
+            this.giveWork(this.workers[i], parsedPayload);
         }
     }
 
     giveWork = (worker: EnhancedWorker, payload: any) => {
         if (this.config.sendingStrategy === MessageSendingStrategy.TRANSFER_LIST) {
             worker.postMessage(payload, [payload]);
-        } else if (this.config.sendingStrategy === MessageSendingStrategy.JSON) {
-            worker.postMessage(JSON.stringify(payload));
+        //JSON method handled by parsePayload mehthod
         } else {
             worker.postMessage(payload);
         }

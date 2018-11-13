@@ -67,6 +67,8 @@ export declare class ThreadManager {
     get: (n: number) => EnhancedWorker | undefined;
     use: (middleware?: Function | undefined) => void;
     sendMessage: (payload: any) => void;
+    parsePayload: (payload: any) => any;
+    stringifyPayload: (payload: any) => string;
     broadcastMessage: (payload: any) => void;
     giveWork: (worker: EnhancedWorker, payload: any) => void;
     chooseWorker: () => EnhancedWorker;
