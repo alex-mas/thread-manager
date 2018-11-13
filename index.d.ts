@@ -57,21 +57,72 @@ export declare class ThreadManager {
     onError?: ErrorHandler;
     lastAssignedWorker: number;
     constructor(filepath: string, config?: Partial<ThreadManagerConfig>, onMessage?: MessageHandler, onError?: ErrorHandler);
-    isCallbackDefined: () => boolean;
+    private isCallbackDefined;
+    /**
+     * Initializes all remaining worker slots, after this call the threadManager will have config.amountOfWorkers running.
+     */
     initializeWorkers: (amount: number) => void;
-    initializeWorker: () => EnhancedWorker | undefined;
-    getCurrentHandler: (event: MessageEvent | ErrorEvent, index: number) => Function;
-    messageHandler: (event: MessageEvent | ErrorEvent) => void;
+    /**
+     * Initializes worker at index provided or at the end of the workers array if no index is provided.
+     * Note: this doesnt initialize a worker if it would exceed amountOfWorkers amount.
+     */
+    initializeWorker: (index?: number | undefined) => EnhancedWorker | undefined;
+    private getCurrentHandler;
+    private messageHandler;
+    /**
+     * @description Merges the provided and existing configurations, givinvg precedence to keys provided by the parameter
+     */
+    setConfig: (config: Partial<ThreadManagerConfig>) => void;
+    /**
+     * @description Sets the logic to execute after middleware when middleware returns a normal message
+     *
+     */
     setMessageHandler: (eHandler: MessageHandler) => void;
+    /**
+     * @description Sets the logic to execute after middleware in case the worker has sent an error message
+     *
+     */
     setErrorHandler: (eHandler: ErrorHandler) => void;
-    get: (n: number) => EnhancedWorker | undefined;
+    /**
+     *
+     * Returns the managed web worker at the index provided
+     *
+     *
+     */
+    get: (index: number) => EnhancedWorker | undefined;
     use: (middleware?: Function | undefined) => void;
+    private parsePayload;
+    private stringifyPayload;
+    /**
+     * Sends the payload to a worker chosen in function of the specified distribution strategy.
+     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead
+     *
+     */
     sendMessage: (payload: any) => void;
-    parsePayload: (payload: any) => any;
-    stringifyPayload: (payload: any) => string;
+    /**
+     * Sends the payload to all managed workers
+     * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
+     *
+     */
     broadcastMessage: (payload: any) => void;
-    giveWork: (worker: EnhancedWorker, payload: any) => void;
-    chooseWorker: () => EnhancedWorker;
+    /**
+     *
+     * @description Terminates the execution of a particular worker if index is provided, or of all workers if no index is provided
+     */
+    terminate: (index?: number | undefined) => void;
+    /**
+     *
+     * @description Terminates and restarts the execution of all workers or a particular worker.
+     *
+     * @param {Number} index - If index is provided just the worker with that index will be restarted
+     *
+     */
+    restart: (index?: number | undefined) => void;
+    private giveWork;
+    private chooseWorker;
+    /**
+     * @description Creates a new worker (if there are available slots for new workers in the thread manager) and sends it the paylod
+     */
     createAndGiveWork: (payload: any) => void;
 }
 export default ThreadManager;

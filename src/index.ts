@@ -109,30 +109,46 @@ export class ThreadManager {
             this.initializeWorkers(this.config.amountOfWorkers);
         }
     }
-    isCallbackDefined = () => {
+    private isCallbackDefined = () => {
         return !this.onMessage === undefined;
     }
-    initializeWorkers = (amount: number) => {
+
+    /**
+     * Initializes all remaining worker slots, after this call the threadManager will have config.amountOfWorkers running.
+     */
+    public initializeWorkers = (amount: number) => {
         let currentAmount = this.workers.length;
         for (let i = 0; i < this.config.amountOfWorkers - currentAmount; i++) {
             if (amount && i >= amount) return;
             this.initializeWorker();
         }
     };
-    initializeWorker = () => {
-        if (this.workers.length < this.config.amountOfWorkers) {
-            this.workers.push(new Worker(this.filePath) as EnhancedWorker);
-            const index = this.workers.length - 1;
-            const worker = this.workers[index];
+
+
+    /**
+     * Initializes worker at index provided or at the end of the workers array if no index is provided.
+     * Note: this doesnt initialize a worker if it would exceed amountOfWorkers amount.
+     */
+    public initializeWorker = (index?: number) => {
+        if (index === undefined && this.workers.length < this.config.amountOfWorkers) {
+            const index = this.workers.push(new Worker(this.filePath) as EnhancedWorker);
+            const worker = this.workers[index-1];
             worker.id = index;
             worker.status = WorkerStatus.IDLE;
             worker.onmessage = this.messageHandler;
             return worker;
-        } else {
-            console.warn('Adding more threads that exceed the configured ammount, change the configured ammount instead');
+        } else if (index && index >= 0 && index < this.workers.length) {
+            const worker = new Worker(this.filePath) as EnhancedWorker;
+            worker.id = index;
+            worker.status = WorkerStatus.IDLE;
+            worker.onmessage = this.messageHandler;
+            this.workers[index] = worker;
+            return worker;
         }
     }
-    getCurrentHandler = (event: MessageEvent | ErrorEvent, index: number) => {
+
+
+    private getCurrentHandler = (event: MessageEvent | ErrorEvent, index: number) => {
         if (isError(event)) {
             return this.middleware[index] || this.onError;
         } else {
@@ -140,7 +156,9 @@ export class ThreadManager {
         }
 
     }
-    messageHandler = (event: MessageEvent | ErrorEvent) => {
+
+
+    private messageHandler = (event: MessageEvent | ErrorEvent) => {
         //generators must be regular functions, thus we need to store the context for usage inside the generator
         const that = this;
         if (event.currentTarget) {
@@ -152,7 +170,7 @@ export class ThreadManager {
             }
         }
         //the functions steps the iterator one time forward and then passes itself to the handler returned by the iterator
-        const next = function() {
+        const next = function () {
             const currentHandler = middlewareIterator.next();
             if (!currentHandler.done) {
                 currentHandler.value(event, next, ...arguments);
@@ -171,55 +189,103 @@ export class ThreadManager {
         next();
 
     }
-    setMessageHandler = (eHandler: MessageHandler) => {
+
+
+    /**
+     * @description Merges the provided and existing configurations, givinvg precedence to keys provided by the parameter
+     */
+    public setConfig = (config: Partial<ThreadManagerConfig>)=>{
+        if (config) {
+            this.config = {
+                ...this.config,
+                ...config
+            };
+        }
+    }
+
+
+    /**
+     * @description Sets the logic to execute after middleware when middleware returns a normal message
+     * 
+     */ 
+    public setMessageHandler = (eHandler: MessageHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
         }
         this.onMessage = eHandler;
     };
 
-    setErrorHandler = (eHandler: ErrorHandler) => {
+
+    /**
+     * @description Sets the logic to execute after middleware in case the worker has sent an error message
+     * 
+     */ 
+    public setErrorHandler = (eHandler: ErrorHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
         }
         this.onError = eHandler;
     }
 
-    get = (n: number) => {
-        if (n < this.workers.length) { return this.workers[n]; }
+
+    /**
+     * 
+     * Returns the managed web worker at the index provided
+     *
+     * 
+     */
+    public get = (index: number) => {
+        if (index < this.workers.length) { return this.workers[index]; }
         else { return undefined; }
     }
-    use = (middleware?: Function) => {
+
+
+    public use = (middleware?: Function) => {
         if (typeof middleware !== 'function') {
             throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof middleware);
         }
         this.middleware.push(middleware);
     }
 
-    sendMessage = (payload: any) => {
-        let parsedPayload = this.parsePayload(payload);
-        if(this.config.sendingStrategy)
-        //if not all workers are not initialized we initialize one of them and assign it the work
-        if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-            return this.createAndGiveWork(parsedPayload);
+
+    private parsePayload = (payload: any): any => {
+        if (this.config.sendingStrategy === MessageSendingStrategy.JSON) {
+            return this.stringifyPayload(payload);
+        } else {
+            return payload;
         }
+    }
+
+
+    private stringifyPayload = (payload: any): string => {
+        return JSON.stringify(payload);
+    }
+
+
+    /**
+     * Sends the payload to a worker chosen in function of the specified distribution strategy. 
+     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead
+     *  
+     */ 
+    public sendMessage = (payload: any) => {
+        let parsedPayload = this.parsePayload(payload);
+        if (this.config.sendingStrategy)
+            //if not all workers are not initialized we initialize one of them and assign it the work
+            if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
+                return this.createAndGiveWork(parsedPayload);
+            }
         let assignedWorker = this.chooseWorker();
         this.giveWork(assignedWorker, parsedPayload);
 
     }
 
-    parsePayload = (payload: any): any=>{
-        if(this.config.sendingStrategy === MessageSendingStrategy.JSON){
-            return this.stringifyPayload(payload);
-        }else{
-            return payload;
-        }
-    }
-    stringifyPayload = (payload: any): string=>{
-        return JSON.stringify(payload);
-    }
 
-    broadcastMessage = (payload: any) => {
+    /**
+     * Sends the payload to all managed workers
+     * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
+     *  
+     */ 
+    public broadcastMessage = (payload: any) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
@@ -230,10 +296,53 @@ export class ThreadManager {
         }
     }
 
-    giveWork = (worker: EnhancedWorker, payload: any) => {
+
+    /**
+     * 
+     * @description Terminates the execution of a particular worker if index is provided, or of all workers if no index is provided
+     */
+    public terminate = (index?: number) => {
+        if (index) {
+            const worker = this.workers[index];
+            if (worker) {
+                worker.terminate();
+            }
+        } else {
+            this.workers.forEach((worker) => worker.terminate());
+        }
+
+    }
+
+
+    /**
+     * 
+     * @description Terminates and restarts the execution of all workers or a particular worker.
+     * 
+     * @param {Number} index - If index is provided just the worker with that index will be restarted 
+     * 
+     */
+    public restart = (index?: number) => {
+        if (index) {
+            const worker = this.workers[index];
+            if (worker) {
+                worker.terminate();
+                delete this.workers[index];
+                this.initializeWorker(index);
+            }
+        } else {
+            this.terminate();
+            const amount = this.workers.length;
+            this.workers = [];
+            this.initializeWorkers(amount);
+        }
+
+    }
+
+
+    private giveWork = (worker: EnhancedWorker, payload: any) => {
         if (this.config.sendingStrategy === MessageSendingStrategy.TRANSFER_LIST) {
             worker.postMessage(payload, [payload]);
-        //JSON method handled by parsePayload mehthod
+            //JSON method handled by parsePayload mehthod
         } else {
             worker.postMessage(payload);
         }
@@ -241,7 +350,7 @@ export class ThreadManager {
     }
 
 
-    chooseWorker = () => {
+    private chooseWorker = () => {
 
         if (this.workers.length === 1) {
             return this.workers[0];
@@ -280,6 +389,11 @@ export class ThreadManager {
         }
         return assignedWorker;
     }
+
+
+    /**
+     * @description Creates a new worker (if there are available slots for new workers in the thread manager) and sends it the paylod
+     */
     createAndGiveWork = (payload: any) => {
         const newWorker = this.initializeWorker();
         if (newWorker) {

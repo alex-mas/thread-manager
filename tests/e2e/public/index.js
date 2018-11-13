@@ -7,7 +7,7 @@ let extraVarPassed = false;
 
 const myManager = new ThreadManager.ThreadManager(
     './workers/test.js', {
-        amountOfWorkers: 10
+        amountOfWorkers: 11
     },
     (message, next, extraVar) => {
         console.log("reached the end of execution of middleware and extra var is",extraVar);
@@ -47,6 +47,8 @@ myManager.use((message, next) => {
 
 myManager.broadcastMessage('message from main thread');
 
+//if it doesnt terminate correctly tests would fail
+myManager.terminate(10);
 
 
 setTimeout(() => {
