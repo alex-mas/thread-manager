@@ -8,7 +8,7 @@ const rootPath = path.join(__dirname, '../');
 var config =  env => ({
     mode: env.NODE_ENV,
     entry: rootPath + 'src/index.ts',
-    devtool: 'source-map',
+    devtool: env.NODE_ENV === 'production'? undefined : 'source-map',
     output: {
         path: rootPath + 'dist',
         filename: 'index.min.js',
