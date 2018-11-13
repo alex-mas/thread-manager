@@ -7,7 +7,7 @@
   "description": "utility class to help managing web workers",
   "main": "dist/index.min.js",
   "scripts": {
-    "genDocs": "node_modules/.bin/typedoc --out ./docs && node ./tasks/postGenDocs.js",
+    "docs": "node_modules/.bin/typedoc --out ./docs && node ./tasks/postGenDocs.js",
     "build": "webpack --config config/webpack.config.js --env.NODE_ENV=development && node ./tasks/postBuild.js",
     "build:prod": "webpack --config config/webpack.config.js -p --env.NODE_ENV=production",
     "test": "npm run build && node tests/e2e/server.js"
