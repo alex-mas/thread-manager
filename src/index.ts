@@ -266,7 +266,7 @@ export class ThreadManager {
      * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead.
      * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */ 
-    public sendMessage = (payload: any, transfer: Transferable[]) => {
+    public sendMessage = (payload: any, transfer?: Transferable[]) => {
         let parsedPayload = this.parsePayload(payload);
         if (this.config.sendingStrategy)
             //if not all workers are not initialized we initialize one of them and assign it the work
@@ -284,7 +284,7 @@ export class ThreadManager {
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
      * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */ 
-    public broadcastMessage = (payload: any, transfer: Transferable[]) => {
+    public broadcastMessage = (payload: any, transfer?: Transferable[]) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
@@ -392,7 +392,7 @@ export class ThreadManager {
     /**
      * @description Creates a new worker (if there are available slots for new workers in the thread manager) and sends it the paylod
      */
-    createAndGiveWork = (payload: any, transfer: Transferable[]) => {
+    createAndGiveWork = (payload: any, transfer?: Transferable[]) => {
         const newWorker = this.initializeWorker();
         if (newWorker) {
             this.giveWork(newWorker, payload, transfer);
