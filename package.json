@@ -2,7 +2,10 @@
   "name": "@axc/thread-manager",
   "version": "0.1.9",
   "keywords": [
-    "web workers"
+    "web workers",
+    "concurrency",
+    "multithreading",
+    "thread manager"
   ],
   "description": "utility class to help managing web workers",
   "main": "dist/index.min.js",

@@ -12,7 +12,7 @@ export interface EnhancedWorker extends Worker {
  *
  * The payload provided to sendMessage and broadcastMessage must abid the assumptions of the selected sending strategy
  *
- * If the sending strategy is TRANSFER_LIST => payload must be transferable (check https://developer.mozilla.org/en-US/docs/Web/API/Transferable)
+ * If you wish to send transferable objects check out the api of sendMessage and broadcastMessage
  *
  * If the sending strategy is JSON => payload should be serializable (no custom objects)
  *
@@ -24,7 +24,6 @@ export interface EnhancedWorker extends Worker {
  */
 export declare enum MessageSendingStrategy {
     DEFAULT = "DEFAULT",
-    TRANSFER_LIST = "TRANSFER_LIST",
     JSON = "JSON"
 }
 export declare enum WorkDistributionStrategy {
@@ -95,16 +94,16 @@ export declare class ThreadManager {
     private stringifyPayload;
     /**
      * Sends the payload to a worker chosen in function of the specified distribution strategy.
-     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead
-     *
+     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead.
+     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */
-    sendMessage: (payload: any) => void;
+    sendMessage: (payload: any, transfer: Transferable[]) => void;
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
-     *
+     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */
-    broadcastMessage: (payload: any) => void;
+    broadcastMessage: (payload: any, transfer: Transferable[]) => void;
     /**
      *
      * @description Terminates the execution of a particular worker if index is provided, or of all workers if no index is provided
@@ -123,6 +122,6 @@ export declare class ThreadManager {
     /**
      * @description Creates a new worker (if there are available slots for new workers in the thread manager) and sends it the paylod
      */
-    createAndGiveWork: (payload: any) => void;
+    createAndGiveWork: (payload: any, transfer: Transferable[]) => void;
 }
 export default ThreadManager;

@@ -20,7 +20,7 @@ export interface EnhancedWorker extends Worker {
  * 
  * The payload provided to sendMessage and broadcastMessage must abid the assumptions of the selected sending strategy
  * 
- * If the sending strategy is TRANSFER_LIST => payload must be transferable (check https://developer.mozilla.org/en-US/docs/Web/API/Transferable)
+ * If you wish to send transferable objects check out the api of sendMessage and broadcastMessage
  * 
  * If the sending strategy is JSON => payload should be serializable (no custom objects)
  * 
@@ -32,7 +32,6 @@ export interface EnhancedWorker extends Worker {
  */
 export enum MessageSendingStrategy {
     DEFAULT = 'DEFAULT',
-    TRANSFER_LIST = 'TRANSFER_LIST',
     JSON = 'JSON'
 }
 
@@ -92,7 +91,7 @@ export class ThreadManager {
             );
         }
         this.filePath = filepath;
-        //TODO: Validate config parameter object in dev mode before merging into default config
+        //TODO: Validate config parameter object in dev mode before merging into default config (and throw err in dev mode)
         if (config) {
             this.config = {
                 ...this.config,
@@ -264,18 +263,18 @@ export class ThreadManager {
 
     /**
      * Sends the payload to a worker chosen in function of the specified distribution strategy. 
-     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead
-     *  
+     * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead.
+     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */ 
-    public sendMessage = (payload: any) => {
+    public sendMessage = (payload: any, transfer: Transferable[]) => {
         let parsedPayload = this.parsePayload(payload);
         if (this.config.sendingStrategy)
             //if not all workers are not initialized we initialize one of them and assign it the work
             if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-                return this.createAndGiveWork(parsedPayload);
+                return this.createAndGiveWork(parsedPayload, transfer);
             }
         let assignedWorker = this.chooseWorker();
-        this.giveWork(assignedWorker, parsedPayload);
+        this.giveWork(assignedWorker, parsedPayload, transfer);
 
     }
 
@@ -283,16 +282,16 @@ export class ThreadManager {
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
-     *  
+     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */ 
-    public broadcastMessage = (payload: any) => {
+    public broadcastMessage = (payload: any, transfer: Transferable[]) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
 
         let parsedPayload = this.parsePayload(payload);
         for (let i = 0; i < this.workers.length; i++) {
-            this.giveWork(this.workers[i], parsedPayload);
+            this.giveWork(this.workers[i], parsedPayload, transfer);
         }
     }
 
@@ -339,10 +338,9 @@ export class ThreadManager {
     }
 
 
-    private giveWork = (worker: EnhancedWorker, payload: any) => {
-        if (this.config.sendingStrategy === MessageSendingStrategy.TRANSFER_LIST) {
-            worker.postMessage(payload, [payload]);
-            //JSON method handled by parsePayload mehthod
+    private giveWork = (worker: EnhancedWorker, payload: any, transfer?: Transferable[]) => {
+        if (transfer) {
+            worker.postMessage(payload, transfer);
         } else {
             worker.postMessage(payload);
         }
@@ -394,10 +392,10 @@ export class ThreadManager {
     /**
      * @description Creates a new worker (if there are available slots for new workers in the thread manager) and sends it the paylod
      */
-    createAndGiveWork = (payload: any) => {
+    createAndGiveWork = (payload: any, transfer: Transferable[]) => {
         const newWorker = this.initializeWorker();
         if (newWorker) {
-            this.giveWork(newWorker, payload);
+            this.giveWork(newWorker, payload, transfer);
         }
     };
 
