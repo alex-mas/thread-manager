@@ -102,9 +102,9 @@ export declare class ThreadManager {
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
-     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
+     * This method doesn't accecpt transferables as you can't access the resources once they are transfered to the first worker.
      */
-    broadcastMessage: (payload: any, transfer?: Transferable[] | undefined) => void;
+    broadcastMessage: (payload: any) => void;
     /**
      *
      * @description Terminates the execution of a particular worker if index is provided, or of all workers if no index is provided

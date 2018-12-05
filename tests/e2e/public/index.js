@@ -6,18 +6,32 @@ let lastMiddlewareHitCount = 0;
 let extraVarPassed = false;
 let didFaultyWorkerCrash = false;
 let didFaultyWorkerSendCorrectMessage = false;
-
+let transferablesCanBeTransfered = false;
+let transferablesCanBeReadInWorker =false;
 
 
 const myTransferableManager = new ThreadManager.ThreadManager(
     './workers/transferables.js',
     {
-        amountOfWorkers:4
+        amountOfWorkers:1
     }
 )
 
+myTransferableManager.use((message, next) => {
+    console.log(message);
+    if(message.data === 'success'){
+        transferablesCanBeReadInWorker = true;
+    }
+});
+
 const myTypedArr = new Int8Array([1,2,3,4,5,6,7,8,9,10]);
 myTransferableManager.sendMessage(myTypedArr.buffer,[myTypedArr.buffer]);
+
+try{
+    myTypedArr.every((num)=>console.log(num));
+}catch(e){
+    transferablesCanBeTransfered =true;
+}
 
 const myErrorManager = new ThreadManager.ThreadManager(
     './workers/crasher.js',
@@ -135,6 +149,18 @@ setTimeout(() => {
         testResults.push(`✅SUCCESS: faulty worker properly sent expected error message`)
     } else {
         testResults.push(`❌FAILURE: faulty worker didn't send expected error message`);
+    }
+
+    if (transferablesCanBeReadInWorker) {
+        testResults.push(`✅SUCCESS: Transferables can be read properly once transfered`)
+    } else {
+        testResults.push(`❌FAILURE: Transferables can't be read properly once transfered`);
+    }
+
+    if (transferablesCanBeTransfered) {
+        testResults.push(`✅SUCCESS: Transferables can be passed properly`)
+    } else {
+        testResults.push(`❌FAILURE: Transferables can't be passed properly`);
     }
 
     testResults.map((result) => {
