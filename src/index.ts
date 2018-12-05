@@ -9,7 +9,8 @@ export enum WorkerStatus {
 
 export interface EnhancedWorker extends Worker {
     id: number,
-    status: WorkerStatus
+    status: WorkerStatus,
+    pendingTasks: number
 }
 
 
@@ -135,12 +136,16 @@ export class ThreadManager {
             worker.id = index;
             worker.status = WorkerStatus.IDLE;
             worker.onmessage = this.messageHandler;
+            worker.onerror = this.messageHandler;
+            worker.pendingTasks = 0;
             return worker;
-        } else if (index && index >= 0 && index < this.workers.length) {
+        } else if (index !== undefined && index >= 0 && index < this.workers.length) {
             const worker = new Worker(this.filePath) as EnhancedWorker;
             worker.id = index;
             worker.status = WorkerStatus.IDLE;
             worker.onmessage = this.messageHandler;
+            worker.onerror = this.messageHandler;
+            worker.pendingTasks = 0;
             this.workers[index] = worker;
             return worker;
         }
@@ -162,9 +167,10 @@ export class ThreadManager {
         const that = this;
         if (event.currentTarget) {
             const target = event.currentTarget as EnhancedWorker;
+            target.pendingTasks-=1;
             if (isError(event)) {
                 target.status = WorkerStatus.CRASHED;
-            } else {
+            } else if(target.pendingTasks === 0) {
                 target.status = WorkerStatus.IDLE;
             }
         }
@@ -282,16 +288,16 @@ export class ThreadManager {
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
-     * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
+     * This method doesn't accecpt transferables as you can't access the resources once they are transfered to the first worker.
      */ 
-    public broadcastMessage = (payload: any, transfer?: Transferable[]) => {
+    public broadcastMessage = (payload: any) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
         }
 
         let parsedPayload = this.parsePayload(payload);
         for (let i = 0; i < this.workers.length; i++) {
-            this.giveWork(this.workers[i], parsedPayload, transfer);
+            this.giveWork(this.workers[i], parsedPayload);
         }
     }
 
@@ -345,6 +351,7 @@ export class ThreadManager {
             worker.postMessage(payload);
         }
         worker.status = WorkerStatus.BUSY;
+        worker.pendingTasks+=1;
     }
 
 

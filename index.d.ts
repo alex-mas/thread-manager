@@ -6,6 +6,7 @@ export declare enum WorkerStatus {
 export interface EnhancedWorker extends Worker {
     id: number;
     status: WorkerStatus;
+    pendingTasks: number;
 }
 /**
  *
