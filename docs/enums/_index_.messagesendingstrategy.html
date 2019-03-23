@@ -74,7 +74,7 @@
 					<div class="lead">
 						<p>The payload provided to sendMessage and broadcastMessage must abid the assumptions of the selected sending strategy</p>
 					</div>
-					<p>If the sending strategy is TRANSFER_LIST =&gt; payload must be transferable (check <a href="https://developer.mozilla.org/en-US/docs/Web/API/Transferable">https://developer.mozilla.org/en-US/docs/Web/API/Transferable</a>)</p>
+					<p>If you wish to send transferable objects check out the api of sendMessage and broadcastMessage</p>
 					<p>If the sending strategy is JSON =&gt; payload should be serializable (no custom objects)</p>
 					<p>Else the payload will be passed as is to the worker, the browser will then perform the
 					structured clone algorithm to get the data on the worker (check <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm">https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm</a>)</p>
@@ -89,7 +89,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.messagesendingstrategy.html#default" class="tsd-kind-icon">DEFAULT</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.messagesendingstrategy.html#json" class="tsd-kind-icon">JSON</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_index_.messagesendingstrategy.html#transfer_list" class="tsd-kind-icon">TRANSFER_<wbr>LIST</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,7 +102,7 @@
 					<div class="tsd-signature tsd-kind-icon">DEFAULT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;DEFAULT&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L34">index.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L35">index.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -113,17 +112,7 @@
 					<div class="tsd-signature tsd-kind-icon">JSON<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;JSON&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L36">index.ts:36</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="transfer_list" class="tsd-anchor"></a>
-					<h3>TRANSFER_<wbr>LIST</h3>
-					<div class="tsd-signature tsd-kind-icon">TRANSFER_<wbr>LIST<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;TRANSFER_LIST&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L35">index.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L36">index.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,9 +145,6 @@
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 								<a href="_index_.messagesendingstrategy.html#json" class="tsd-kind-icon">JSON</a>
 							</li>
-							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="_index_.messagesendingstrategy.html#transfer_list" class="tsd-kind-icon">TRANSFER_<wbr>LIST</a>
-							</li>
 						</ul>
 					</li>
 				</ul>
@@ -186,6 +172,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="../modules/_index_.html#messagehandler" class="tsd-kind-icon">Message<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/_index_.html#threadmanagermiddleware" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Middleware</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_index_.html#iserror" class="tsd-kind-icon">is<wbr>Error</a>

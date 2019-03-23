@@ -98,6 +98,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_index_.html#errorhandler" class="tsd-kind-icon">Error<wbr>Handler</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_index_.html#messagehandler" class="tsd-kind-icon">Message<wbr>Handler</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-external-module"><a href="_index_.html#threadmanagermiddleware" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Middleware</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -123,7 +124,7 @@
 					<div class="tsd-signature tsd-kind-icon">Error<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L77">index.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L86">index.ts:86</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -154,7 +155,7 @@
 					<div class="tsd-signature tsd-kind-icon">Message<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L76">index.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L85">index.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -179,6 +180,61 @@
 						</ul>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module">
+					<a name="threadmanagermiddleware" class="tsd-anchor"></a>
+					<h3>Thread<wbr>Manager<wbr>Middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">Thread<wbr>Manager<wbr>Middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L78">index.ts:78</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-siganture">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias tsd-is-not-exported">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ErrorEvent</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MessageEvent</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, <span class="tsd-signature-symbol">...</span>extraArgs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>e: <span class="tsd-signature-type">ErrorEvent</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MessageEvent</span></h5>
+											</li>
+											<li>
+												<h5>next: <span class="tsd-signature-type">function</span></h5>
+												<ul class="tsd-parameters">
+													<li class="tsd-parameter-siganture">
+														<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+															<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+														</ul>
+														<ul class="tsd-descriptions">
+															<li class="tsd-description">
+																<h4 class="tsd-parameters-title">Parameters</h4>
+																<ul class="tsd-parameters">
+																	<li>
+																		<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+																	</li>
+																</ul>
+																<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+															</li>
+														</ul>
+													</li>
+												</ul>
+											</li>
+											<li>
+												<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>extraArgs: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Functions</h2>
@@ -192,7 +248,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L71">index.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L80">index.ts:80</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -214,7 +270,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Configuration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L56">index.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L64">index.ts:64</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -223,7 +279,7 @@
 						<div class="tsd-signature tsd-kind-icon">amount<wbr>OfWorkers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;window.navigator.hardwareConcurrency / 2</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L58">index.ts:58</a></li>
+								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L66">index.ts:66</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -233,7 +289,7 @@
 						<div class="tsd-signature tsd-kind-icon">distribution<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.workdistributionstrategy.html" class="tsd-signature-type">WorkDistributionStrategy</a><span class="tsd-signature-symbol"> =&nbsp;WorkDistributionStrategy.ROUND_ROBIN</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L57">index.ts:57</a></li>
+								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L65">index.ts:65</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -243,7 +299,7 @@
 						<div class="tsd-signature tsd-kind-icon">initialization<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.initializationstrategy.html" class="tsd-signature-type">InitializationStrategy</a><span class="tsd-signature-symbol"> =&nbsp;InitializationStrategy.AT_START</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L59">index.ts:59</a></li>
+								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L67">index.ts:67</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -253,7 +309,7 @@
 						<div class="tsd-signature tsd-kind-icon">sending<wbr>Strategy<span class="tsd-signature-symbol">:</span> <a href="../enums/_index_.messagesendingstrategy.html" class="tsd-signature-type">MessageSendingStrategy</a><span class="tsd-signature-symbol"> =&nbsp;MessageSendingStrategy.DEFAULT</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/19fcd87/src/index.ts#L60">index.ts:60</a></li>
+								<li>Defined in <a href="https://github.com/alex-mas/thread-manager/blob/851b2c9/src/index.ts#L68">index.ts:68</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -302,6 +358,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
 						<a href="_index_.html#messagehandler" class="tsd-kind-icon">Message<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="_index_.html#threadmanagermiddleware" class="tsd-kind-icon">Thread<wbr>Manager<wbr>Middleware</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_index_.html#iserror" class="tsd-kind-icon">is<wbr>Error</a>
