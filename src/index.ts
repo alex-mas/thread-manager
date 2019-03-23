@@ -41,6 +41,14 @@ export enum WorkDistributionStrategy {
     FIRST_IDLE = 'FIRST_IDLE'
 }
 
+/**
+ * 
+ * with AT_START all threads are initialized when the tread manager is constructed
+ *
+ * with DELAYED the threads are initialized when there are no idle threads to handle incoming messages
+ * 
+ * 
+ */
 export enum InitializationStrategy {
     AT_START = 'AT_START',
     DELAYED = 'DELAYED'
@@ -67,6 +75,7 @@ export interface WorkerMessage {
     payload: any
 }
 
+export type ThreadManagerMiddleware = (e: ErrorEvent | MessageEvent, next: (...args: any[])=>void, ...extraArgs: any[]) => void;
 
 const isError = (event: ErrorEvent | MessageEvent): event is ErrorEvent => {
     return event instanceof ErrorEvent;
@@ -110,7 +119,7 @@ export class ThreadManager {
         }
     }
     private isCallbackDefined = () => {
-        return !this.onMessage === undefined;
+        return !(this.onMessage === undefined);
     }
 
     /**
@@ -209,6 +218,8 @@ export class ThreadManager {
     }
 
 
+
+
     /**
      * @description Sets the logic to execute after middleware when middleware returns a normal message
      * 
@@ -245,11 +256,20 @@ export class ThreadManager {
     }
 
 
-    public use = (middleware?: Function) => {
+    public use = (middleware?: ThreadManagerMiddleware) => {
         if (typeof middleware !== 'function') {
             throw new Error('ThreadManager middleware is expected to be a function, not a ' + typeof middleware);
         }
         this.middleware.push(middleware);
+    }
+
+    /**
+     * 
+     * In order to unuse middleware the exact reference to the function provided as parameter to use must be passed here, as they are compared via === 
+     * 
+     */
+    public unuse = (func: ThreadManagerMiddleware)=>{
+        this.middleware = this.middleware.filter((m)=>m!==func);
     }
 
 
@@ -281,7 +301,20 @@ export class ThreadManager {
             }
         let assignedWorker = this.chooseWorker();
         this.giveWork(assignedWorker, parsedPayload, transfer);
+    }
 
+    public sendMessageAsync = (returnCondition: (e: ErrorEvent  | MessageEvent, ...extraArgs: any[])=>boolean,payload: any, transfer?: Transferable[])=>{
+        return new Promise((resolve,reject)=>{
+            const mHandler = (message: MessageEvent | ErrorEvent, next: Function, ...extraArgs: any[])=>{
+                if(returnCondition(message, extraArgs)){
+                    this.unuse(mHandler);
+                    resolve(message);
+                }
+                next();
+            }
+            this.use(mHandler);
+            this.sendMessage(payload, transfer);
+        });
     }
 
 
@@ -300,6 +333,7 @@ export class ThreadManager {
             this.giveWork(this.workers[i], parsedPayload);
         }
     }
+
 
 
     /**

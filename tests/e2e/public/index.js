@@ -102,9 +102,26 @@ myManager.broadcastMessage('message from main thread');
 myManager.terminate(10);
 
 
-setTimeout(() => {
+setTimeout(async() => {
 
     const testResults = [];
+
+    const asyncManager = new ThreadManager.ThreadManager(
+        './workers/identity.js',
+        {
+            amountOfWorkers:1
+        }
+    );
+
+    asyncManager.setMessageHandler(()=>undefined);
+    const res = await asyncManager.sendMessageAsync(()=>true,'hello world');
+    if(res.data === 'hello world'){
+        testResults.push(`✅SUCCESS: sendMessageAsync can retrieve the values inside an async function`);
+    }else{
+        testResults.push(
+            `❌FAILURE: the value returned from the promise is ${res} instead of "hello world"`
+        );
+    }
     if (hitCount !== 5) {
         testResults.push(
             `❌FAILURE: the event handler should have triggered 5 times,instead it just triggered ${hitCount} times`

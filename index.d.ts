@@ -31,6 +31,14 @@ export declare enum WorkDistributionStrategy {
     ROUND_ROBIN = "ROUND_ROBIN",
     FIRST_IDLE = "FIRST_IDLE"
 }
+/**
+ *
+ * with AT_START all threads are initialized when the tread manager is constructed
+ *
+ * with DELAYED the threads are initialized when there are no idle threads to handle incoming messages
+ *
+ *
+ */
 export declare enum InitializationStrategy {
     AT_START = "AT_START",
     DELAYED = "DELAYED"
@@ -46,6 +54,7 @@ export interface WorkerMessage {
     type: string;
     payload: any;
 }
+export declare type ThreadManagerMiddleware = (e: ErrorEvent | MessageEvent, next: (...args: any[]) => void, ...extraArgs: any[]) => void;
 export declare type MessageHandler = (event: MessageEvent) => any;
 export declare type ErrorHandler = (event: ErrorEvent) => any;
 export declare class ThreadManager {
@@ -90,7 +99,13 @@ export declare class ThreadManager {
      *
      */
     get: (index: number) => EnhancedWorker | undefined;
-    use: (middleware?: Function | undefined) => void;
+    use: (middleware?: ThreadManagerMiddleware | undefined) => void;
+    /**
+     *
+     * In order to unuse middleware the exact reference to the function provided as parameter to use must be passed here, as they are compared via ===
+     *
+     */
+    unuse: (func: ThreadManagerMiddleware) => void;
     private parsePayload;
     private stringifyPayload;
     /**
@@ -99,6 +114,7 @@ export declare class ThreadManager {
      * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */
     sendMessage: (payload: any, transfer?: Transferable[] | undefined) => void;
+    sendMessageAsync: (returnCondition: (e: MessageEvent | ErrorEvent, ...extraArgs: any[]) => boolean, payload: any, transfer?: Transferable[] | undefined) => Promise<{}>;
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
