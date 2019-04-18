@@ -75,7 +75,7 @@ export interface WorkerMessage {
     payload: any
 }
 
-export type ThreadManagerMiddleware = (e: ErrorEvent | MessageEvent, next: (...args: any[])=>void, ...extraArgs: any[]) => void;
+export type ThreadManagerMiddleware = (e: ErrorEvent | MessageEvent, next: (...args: any[]) => void, ...extraArgs: any[]) => void;
 
 const isError = (event: ErrorEvent | MessageEvent): event is ErrorEvent => {
     return event instanceof ErrorEvent;
@@ -141,7 +141,7 @@ export class ThreadManager {
     public initializeWorker = (index?: number) => {
         if (index === undefined && this.workers.length < this.config.amountOfWorkers) {
             const index = this.workers.push(new Worker(this.filePath) as EnhancedWorker);
-            const worker = this.workers[index-1];
+            const worker = this.workers[index - 1];
             worker.id = index;
             worker.status = WorkerStatus.IDLE;
             worker.onmessage = this.messageHandler;
@@ -176,10 +176,10 @@ export class ThreadManager {
         const that = this;
         if (event.currentTarget) {
             const target = event.currentTarget as EnhancedWorker;
-            target.pendingTasks-=1;
+            target.pendingTasks -= 1;
             if (isError(event)) {
                 target.status = WorkerStatus.CRASHED;
-            } else if(target.pendingTasks === 0) {
+            } else if (target.pendingTasks === 0) {
                 target.status = WorkerStatus.IDLE;
             }
         }
@@ -208,7 +208,7 @@ export class ThreadManager {
     /**
      * @description Merges the provided and existing configurations, givinvg precedence to keys provided by the parameter
      */
-    public setConfig = (config: Partial<ThreadManagerConfig>)=>{
+    public setConfig = (config: Partial<ThreadManagerConfig>) => {
         if (config) {
             this.config = {
                 ...this.config,
@@ -223,7 +223,7 @@ export class ThreadManager {
     /**
      * @description Sets the logic to execute after middleware when middleware returns a normal message
      * 
-     */ 
+     */
     public setMessageHandler = (eHandler: MessageHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
@@ -235,7 +235,7 @@ export class ThreadManager {
     /**
      * @description Sets the logic to execute after middleware in case the worker has sent an error message
      * 
-     */ 
+     */
     public setErrorHandler = (eHandler: ErrorHandler) => {
         if (!eHandler || typeof eHandler !== 'function') {
             throw new Error('Expected a function as argument and got a ' + typeof eHandler);
@@ -268,8 +268,8 @@ export class ThreadManager {
      * In order to unuse middleware the exact reference to the function provided as parameter to use must be passed here, as they are compared via === 
      * 
      */
-    public unuse = (func: ThreadManagerMiddleware)=>{
-        this.middleware = this.middleware.filter((m)=>m!==func);
+    public unuse = (func: ThreadManagerMiddleware) => {
+        this.middleware = this.middleware.filter((m) => m !== func);
     }
 
 
@@ -291,26 +291,35 @@ export class ThreadManager {
      * Sends the payload to a worker chosen in function of the specified distribution strategy. 
      * If initialization is delayed and the ThreadManager can still manage more workers a new worker will be spawned and given the task instead.
      * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
-     */ 
+     */
     public sendMessage = (payload: any, transfer?: Transferable[]) => {
         let parsedPayload = this.parsePayload(payload);
-        if (this.config.sendingStrategy)
-            //if not all workers are not initialized we initialize one of them and assign it the work
-            if (this.workers.length < this.config.amountOfWorkers && this.config.initializationStrategy === InitializationStrategy.DELAYED) {
-                return this.createAndGiveWork(parsedPayload, transfer);
-            }
+        //if not all workers are not initialized we initialize one of them and assign it the work
+        if (this.config.initializationStrategy === InitializationStrategy.DELAYED && this.workers.length < this.config.amountOfWorkers) {
+            return this.createAndGiveWork(parsedPayload, transfer);
+        }
         let assignedWorker = this.chooseWorker();
         this.giveWork(assignedWorker, parsedPayload, transfer);
     }
 
-    public sendMessageAsync = (returnCondition: (e: ErrorEvent  | MessageEvent, ...extraArgs: any[])=>boolean,payload: any, transfer?: Transferable[])=>{
-        return new Promise((resolve,reject)=>{
-            const mHandler = (message: MessageEvent | ErrorEvent, next: Function, ...extraArgs: any[])=>{
-                if(returnCondition(message, extraArgs)){
+    /**
+     * 
+     * Returns a promise that resolves when a thread responds to the message
+     * 
+     */
+    public sendMessageAsync = (returnCondition: (e: ErrorEvent | MessageEvent, ...extraArgs: any[]) => boolean, payload: any, transfer?: Transferable[], timeout?: number) => {
+        return new Promise((resolve, reject) => {
+            const mHandler = (message: MessageEvent | ErrorEvent, next: Function, ...extraArgs: any[]) => {
+                if (returnCondition(message, extraArgs)) {
                     this.unuse(mHandler);
                     resolve(message);
                 }
                 next();
+            }
+            if(timeout){
+                setTimeout(()=>{
+                    reject(`Timeout: ${timeout} milliseconds passed and no valid response have been obtained`);
+                },timeout);
             }
             this.use(mHandler);
             this.sendMessage(payload, transfer);
@@ -322,7 +331,7 @@ export class ThreadManager {
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.
      * This method doesn't accecpt transferables as you can't access the resources once they are transfered to the first worker.
-     */ 
+     */
     public broadcastMessage = (payload: any) => {
         if (this.workers.length < this.config.amountOfWorkers) {
             this.initializeWorkers(this.config.amountOfWorkers - this.workers.length);
@@ -385,7 +394,7 @@ export class ThreadManager {
             worker.postMessage(payload);
         }
         worker.status = WorkerStatus.BUSY;
-        worker.pendingTasks+=1;
+        worker.pendingTasks += 1;
     }
 
 

@@ -22,15 +22,15 @@
   "author": "Àlex Mas",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "babel": "^6.23.0",
-    "babel-loader": "^8.0.0-beta.0",
-    "express": "^4.16.3",
-    "ts-loader": "^5.3.0",
-    "typedoc": "^0.13.0",
-    "typescript": "^3.1.6",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.1.2"
+    "babel-loader": "^8.0.5",
+    "express": "^4.16.4",
+    "ts-loader": "^5.3.3",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.4.3",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0"
   }
 }

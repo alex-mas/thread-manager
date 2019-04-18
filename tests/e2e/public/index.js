@@ -107,21 +107,17 @@ setTimeout(async() => {
     const testResults = [];
 
     const asyncManager = new ThreadManager.ThreadManager(
-        './workers/identity.js',
+        './workers/reduceDelayOverTime.js',
         {
             amountOfWorkers:1
         }
     );
 
     asyncManager.setMessageHandler(()=>undefined);
-    const res = await asyncManager.sendMessageAsync(()=>true,'hello world');
-    if(res.data === 'hello world'){
-        testResults.push(`✅SUCCESS: sendMessageAsync can retrieve the values inside an async function`);
-    }else{
-        testResults.push(
-            `❌FAILURE: the value returned from the promise is ${res} instead of "hello world"`
-        );
-    }
+    const p =  asyncManager.sendMessageAsync((m)=>{console.log('async response',m, m.data.id === 0); return m.data.id === 0},'hello world', undefined,10000);
+    const p2 = asyncManager.sendMessageAsync((m)=>m.data.id ==1,'hello world', undefined,9000);
+
+
     if (hitCount !== 5) {
         testResults.push(
             `❌FAILURE: the event handler should have triggered 5 times,instead it just triggered ${hitCount} times`
@@ -179,6 +175,25 @@ setTimeout(async() => {
     } else {
         testResults.push(`❌FAILURE: Transferables can't be passed properly`);
     }
+
+    let res;
+    let res2;
+    try{
+        res = await p;
+        res2 = await p2;
+
+    }catch(e){
+        console.warn(e);
+    }
+    if(res.data.data === 'hello world'){
+        testResults.push(`✅SUCCESS: sendMessageAsync can retrieve the values inside an async function even with concurrent processing as long as an identifier is provided to select the response`);
+    }else{
+        testResults.push(
+            `❌FAILURE: the value returned from the promise is ${JSON.stringify(res)} instead of "hello world"`
+        );
+    }
+
+
 
     testResults.map((result) => {
         const node = document.createElement("div");

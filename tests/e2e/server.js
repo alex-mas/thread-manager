@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 
-
+fs.mkdirSync('./tests/e2e/public/lib');
 fs.copyFileSync('./dist/index.min.js', './tests/e2e/public/lib/threadManager.js');
 
 

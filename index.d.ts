@@ -114,7 +114,12 @@ export declare class ThreadManager {
      * For more info about the parameters check https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
      */
     sendMessage: (payload: any, transfer?: Transferable[] | undefined) => void;
-    sendMessageAsync: (returnCondition: (e: MessageEvent | ErrorEvent, ...extraArgs: any[]) => boolean, payload: any, transfer?: Transferable[] | undefined) => Promise<{}>;
+    /**
+     *
+     * Returns a promise that resolves when a thread responds to the message
+     *
+     */
+    sendMessageAsync: (returnCondition: (e: MessageEvent | ErrorEvent, ...extraArgs: any[]) => boolean, payload: any, transfer?: Transferable[] | undefined, timeout?: number | undefined) => Promise<{}>;
     /**
      * Sends the payload to all managed workers
      * If initialization is delayed and the ThreadManager can still manage more workers all remaining slots for workers will be initialized with new workers before broadcasting the payload.

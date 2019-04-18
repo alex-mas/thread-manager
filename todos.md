@@ -2,4 +2,3 @@
 - Benchmark the overhead provided by this library
 - New distribution methods
 - Generate informative error handling only on development version
-- migrate lib to ts
