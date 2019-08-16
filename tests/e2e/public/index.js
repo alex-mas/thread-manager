@@ -202,9 +202,3 @@ setTimeout(async() => {
     });
 
 }, 5000);
-
-
-
-
-
-console.log('reached end of script');
