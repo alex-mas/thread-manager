@@ -1,6 +1,6 @@
 {
   "name": "@axc/thread-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [
     "web workers",
     "concurrency",
@@ -28,7 +28,7 @@
     "babel-loader": "^8.0.5",
     "express": "^4.16.4",
     "ts-loader": "^5.3.3",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typescript": "^3.4.3",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
