@@ -5,10 +5,10 @@ var libraryName = 'ThreadManager';
 
 const rootPath = path.join(__dirname, '../');
 
-var config =  env => ({
-    mode: env.NODE_ENV,
+var config =  ({mode,env}) => ({
+    mode,
     entry: rootPath + 'src/index.ts',
-    devtool: env.NODE_ENV === 'production'? undefined : 'source-map',
+    devtool: mode  === 'production'? undefined : 'source-map',
     output: {
         path: rootPath + 'dist',
         filename: 'index.min.js',

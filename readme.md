@@ -1,19 +1,20 @@
 # Thread Manager
-> Library designed to facilitate using multiple WebWorkers
+> Library designed to facilitate orchestrating work across multiple WebWorkers
 
 
-Thread manager offers features such as a middleware system and different work distribution methods to optimize the load across the pools of workers. It works in web and electron environments.
+Thread manager offers the following features on top of the standard Web Workers API: 
+- Ability to spawn multiple workers and manage them with a simple api.
+- Different work distribution methods to optimize the load across the pools of workers.
+- Middleware system 
 
 # Usage
 
-The package is intended to be used in the browser, it is packaged as umd so it can be added to your .html or included for webpack/rollup to handle
+The package is packaged as umd so it can be added to your .html or included for webpack/rollup to handle
 
 
 ## Example
 
-
-Check /tests/e2e folder for a complete example.
-
+Check /tests/e2e folder for diferent examples, but a simple one would be: 
 
 ```javascript
 
@@ -21,14 +22,18 @@ Check /tests/e2e folder for a complete example.
 
 import {ThreadManager} from '@axc/thread-manager'
 
-const TaskManager = new ThreadManager('./path/to/your/worker.js');
+const TaskManager = new ThreadManager({src: './path/to/your/worker.js', config: {amount: 10}});
 
 TaskManager.setMessageHandler = (e)=>{
     console.log(e.data);
     //yields 'Hello world'
 }
 
-TaskManager.sendMessage('Hello world');
+//triggers setMessageHandler once
+TaskManager.sendMessage('Hello World');
+
+//triggers setMessageHandler ten times
+TaskManager.broadcast('Hello World')
 
 
 ```
@@ -47,4 +52,5 @@ onmessage = function (message) {
 
 You can check the documentation [here](https://alex-mas.github.io/thread-manager/classes/_index_.threadmanager.html)
 
+For more information, check [mdn Web Workers API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) since most functionality here just wraps what is ofered by the Worker and SharedWorker objects.
 

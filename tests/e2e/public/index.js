@@ -1,3 +1,4 @@
+
 let hitCount = 0;
 let successfullyPassedContext = true;
 let middlewareExecutes = false;
@@ -10,12 +11,13 @@ let transferablesCanBeTransfered = false;
 let transferablesCanBeReadInWorker =false;
 
 
-const myTransferableManager = new ThreadManager.ThreadManager(
-    './workers/transferables.js',
-    {
-        amountOfWorkers:1
+const myTransferableManager = new ThreadManager.ThreadManager({
+    src: './workers/transferables.js',
+    config: {
+        amount:1
     }
-)
+})
+
 
 myTransferableManager.use((message, next) => {
     console.log(message);
@@ -33,12 +35,12 @@ try{
     transferablesCanBeTransfered =true;
 }
 
-const myErrorManager = new ThreadManager.ThreadManager(
-    './workers/crasher.js',
-    {
-        amountOfWorkers: 1
-    }
-);
+const myErrorManager = new ThreadManager.ThreadManager({
+  src: './workers/crasher.js',
+  config: {
+      amount:1
+  }
+});
 
 
 myErrorManager.setErrorHandler(
@@ -49,7 +51,7 @@ myErrorManager.setErrorHandler(
         if(error){
             didFaultyWorkerCrash = true;
         }
-        if(error.message === 'Uncaught Error: message from main thread'){
+        if(error.message.includes('message from main thread')){
             didFaultyWorkerSendCorrectMessage = true;
         }
     }
@@ -57,24 +59,25 @@ myErrorManager.setErrorHandler(
 myErrorManager.broadcastMessage('message from main thread');
 
 const myManager = new ThreadManager.ThreadManager(
-    './workers/test.js', {
-        amountOfWorkers: 11
+  {
+    src: './workers/test.js',
+    config: {
+      amount: 11
     },
-    (message, next, extraVar) => {
-        console.log("reached the end of execution of middleware and extra var is", extraVar);
-        console.log('Obtained a message from the worker thread: ', message);
-        hitCount++;
-        if (extraVar === "hello world") {
-            extraVarPassed = true;
-        }
-
-        if (!message.data) {
-            successfullyPassedContext = false;
-        }
+  onMessage: (message, next, extraVar) => {
+    console.log("reached the end of execution of middleware and extra var is", extraVar);
+    console.log('Obtained a message from the worker thread: ', message);
+    hitCount++;
+    if (extraVar === "hello world") {
+        extraVarPassed = true;
     }
-);
 
+    if (!message.data) {
+        successfullyPassedContext = false;
+    }
+}
 
+});
 
 myManager.use((message, next) => {
     console.log('calling middleware 1');
@@ -102,16 +105,42 @@ myManager.broadcastMessage('message from main thread');
 myManager.terminate(10);
 
 
+let sharedHits = 0;
+const mySharedManager = new ThreadManager.ThreadManager(
+  {
+    src:'./workers/shared.js',
+    config: {
+      amount: 1
+   },
+  onMessage: (message, next, extraVar) => {
+    if(message.type !== 'error'){
+      sharedHits++;
+    }
+    console.log('Message from shared worker', message);
+    
+  },
+  createWorker: (src)=> {
+    const worker = new SharedWorker(src);
+    return worker;
+  }
+});
+
+for(let i = 0; i< 10; i++){
+  mySharedManager.sendMessage('message from main thread');
+}
+
+
+
 setTimeout(async() => {
 
     const testResults = [];
 
-    const asyncManager = new ThreadManager.ThreadManager(
-        './workers/reduceDelayOverTime.js',
-        {
-            amountOfWorkers:1
-        }
-    );
+    const asyncManager = new ThreadManager.ThreadManager( {
+      src:'./workers/reduceDelayOverTime.js',
+      config: {
+          amount:1
+      }
+    });
 
     asyncManager.setMessageHandler(()=>undefined);
     const p =  asyncManager.sendMessageAsync((m)=>{console.log('async response',m, m.data.id === 0); return m.data.id === 0},'hello world', undefined,10000);
@@ -175,6 +204,11 @@ setTimeout(async() => {
     } else {
         testResults.push(`❌FAILURE: Transferables can't be passed properly`);
     }
+    if (sharedHits === 10) {
+      testResults.push(`✅SUCCESS: Shared worker is handled correctly by the manager`)
+  } else {
+      testResults.push(`❌FAILURE: Shared worker didn't respond the expected amount of times. Expected: ${10} found ${sharedHits}`);
+  }
 
     let res;
     let res2;
@@ -192,8 +226,6 @@ setTimeout(async() => {
             `❌FAILURE: the value returned from the promise is ${JSON.stringify(res)} instead of "hello world"`
         );
     }
-
-
 
     testResults.map((result) => {
         const node = document.createElement("div");

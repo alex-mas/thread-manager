@@ -11,5 +11,4 @@ onmessage = function (message) {
     } else {
         postMessage(false);
     }
-
 }
